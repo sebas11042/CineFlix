@@ -203,21 +203,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix web">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-7.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
-                            </ul>
-                        </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculas}">
+                <div class="portfolio__item">
+                    <div class="portfolio__item__video set-bg"
+                        th:attr="data-setbg=@{'/img/' + ${pelicula.imagenUrl}}">
+                        <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" class="play-btn">
+                            <i class="fa fa-play"></i>
+                        </a>
+                    </div>
+                    <div class="portfolio__item__text">
+                        <h4 th:text="${pelicula.titulo}">Título película</h4>
+                        <ul>
+                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+
                 <div class="col-lg-4 col-md-6 col-sm-6 mix photography">
                     <div class="portfolio__item">
                         <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-8.jpg">
