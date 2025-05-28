@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Videograph Template">
-    <meta name="keywords" content="Videograph, unica, creative, html">
+    <meta name="description" content="CineFlix Template">
+    <meta name="keywords" content="Cine, Películas, HTML">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>CINEFIX</title>
+    <title>CINEFLIX</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
@@ -22,27 +22,25 @@
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-
 </head>
 
 <body>
-    <!-- Page Preloder -->
+    <!-- Page Preloader -->
     <div id="preloder">
         <div class="loader"></div>
     </div>
 
     <!-- Header Section Begin -->
     <section class="portfolio nuevo">
-        <header class>
+        <header>
             <div class="container">
                 <div class="row">
                     <div class="col-lg-2">
                         <div class="header__logo">
-                            <a href="./index.html"><img src="img/logo/LOGO.png" alt=""></a>
+                            <a href="/"><img src="img/logo/LOGO.png" alt="CineFlix Logo"></a>
                             <div class="header__nav__social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-dribbble"></i></a>
                                 <a href="#"><i class="fa fa-instagram"></i></a>
                                 <a href="#"><i class="fa fa-youtube-play"></i></a>
                             </div>
@@ -52,22 +50,10 @@
                         <div class="header__nav__option">
                             <nav class="header__nav__menu mobile-menu">
                                 <ul>
-                                    <li class="active"><a href="./index.html">Home</a></li>
-                                    <li><a href="./about.html">About</a></li>
-                                    <li><a href="./portfolio.html">Portfolio</a></li>
-                                    <li><a href="./services.html">Services</a></li>
-                                    <li><a href="#">Pages</a>
-                                        <ul class="dropdown">
-                                            <li><a href="./about.html">About</a></li>
-                                            <li><a href="./portfolio.html">Portfolio</a></li>
-                                            <li><a href="./blog.html">Blog</a></li>
-                                            <li><a href="./blog-details.html">Blog Details</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="./contact.html">Contact</a></li>
+                                    <li class="active"><a href="/">Inicio</a></li>
+                                    <li><a href="#">Contacto</a></li>
                                 </ul>
                             </nav>
-
                         </div>
                     </div>
                 </div>
@@ -77,29 +63,14 @@
     </section>
     <!-- Header End -->
 
-
     <!-- Hero Section Begin -->
     <section class="hero">
         <div class="hero__slider owl-carousel">
-            <!-- Imagen 1 -->
-            <a href="https://tupagina.com/destino">
-                <div class="hero__item set-bg" data-setbg="img/hero/2.png">
-                </div>
-            </a>
-            <!-- Imagen 2 -->
-            <a href="https://tupagina.com/destino">
-                <div class="hero__item set-bg" data-setbg="img/hero/3.png">
-                </div>
-            </a>
-            <!-- Imagen 3 -->
-            <a href="https://tupagina.com/destino">
-                <div class="hero__item set-bg" data-setbg="img/hero/4.png">
-                </div>
-            </a>
-            <a href="https://tupagina.com/destino">
-                <div class="hero__item set-bg" data-setbg="img/hero/5.png">
-                </div>
-            </a>
+            <div class="hero__item set-bg" data-setbg="img/hero/2.png"></div>
+            <div class="hero__item set-bg" data-setbg="img/hero/3.png"></div>
+            <div class="hero__item set-bg" data-setbg="img/hero/4.png"></div>
+            <div class="hero__item set-bg" data-setbg="img/hero/5.png"></div>
+        </div>
     </section>
     <!-- Hero Section End -->
 
@@ -109,152 +80,23 @@
             <div class="row">
                 <div class="col-lg-12">
                     <ul class="portfolio__filter">
-                        <li class="active" data-filter="*">All</li>
-                        <li data-filter=".branding">Branding</li>
-                        <li data-filter=".digital-marketing">Digital marketing</li>
-                        <li data-filter=".web">Web</li>
-                        <li data-filter=".photography">Photography</li>
-                        <li data-filter=" .ecommerce">eCommerce</li>
+                        <li class="active" data-filter="*">Cartelera</li>
                     </ul>
                 </div>
             </div>
             <div class="row portfolio__gallery">
-                <div class="col-lg-4 col-md-6 col-sm-6 mix branding">
+                <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculas}">
                     <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-1.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
+                        <div class="portfolio__item__video set-bg"
+                             th:attr="data-setbg=${pelicula.imagenUrl}">
+                            <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}"></a>
                         </div>
                         <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
+                            <h4 th:text="${pelicula.titulo}">Título</h4>
                             <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
+                                <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix digital-marketing">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-2.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <span>Photography</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix web">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-3.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix photography">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-4.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix ecommerce">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-5.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <span>Photography</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix branding">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-6.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculas}">
-                <div class="portfolio__item">
-                    <div class="portfolio__item__video set-bg"
-                        th:attr="data-setbg=@{'/img/' + ${pelicula.imagenUrl}}">
-                        <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" class="play-btn">
-                            <i class="fa fa-play"></i>
-                        </a>
-                    </div>
-                    <div class="portfolio__item__text">
-                        <h4 th:text="${pelicula.titulo}">Título película</h4>
-                        <ul>
-                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-                <div class="col-lg-4 col-md-6 col-sm-6 mix photography">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-8.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <span>Photography</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6 mix ecommerce">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg" data-setbg="img/portfolio/portfolio-9.jpg">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="play-btn video-popup"><i
-                                    class="fa fa-play"></i></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4>VIP Auto Tires & Service</h4>
-                            <ul>
-                                <li>eCommerce</li>
-                                <li>Magento</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="pagination__option">
-                        <a href="#" class="arrow__pagination left__arrow"><span class="arrow_left"></span> Prev</a>
-                        <a href="#" class="number__pagination">1</a>
-                        <a href="#" class="number__pagination">2</a>
-                        <a href="#" class="arrow__pagination right__arrow">Next <span class="arrow_right"></span></a>
                     </div>
                 </div>
             </div>
@@ -269,60 +111,15 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6">
                         <div class="footer__top__logo">
-                            <a href="#"><img src="img/logo.png" alt=""></a>
+                            <a href="#"><img src="img/logo.png" alt="Logo CineFlix"></a>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6">
                         <div class="footer__top__social">
                             <a href="#"><i class="fa fa-facebook"></i></a>
                             <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-dribbble"></i></a>
                             <a href="#"><i class="fa fa-instagram"></i></a>
                             <a href="#"><i class="fa fa-youtube-play"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="footer__option">
-                <div class="row">
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="footer__option__item">
-                            <h5>About us</h5>
-                            <p>Formed in 2006 by Matt Hobbs and Cael Jones, Videoprah is an award-winning, full-service
-                                production company specializing.</p>
-                            <a href="#" class="read__more">Read more <span class="arrow_right"></span></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-3">
-                        <div class="footer__option__item">
-                            <h5>Who we are</h5>
-                            <ul>
-                                <li><a href="#">Team</a></li>
-                                <li><a href="#">Carrers</a></li>
-                                <li><a href="#">Contact us</a></li>
-                                <li><a href="#">Locations</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-3">
-                        <div class="footer__option__item">
-                            <h5>Our work</h5>
-                            <ul>
-                                <li><a href="#">Feature</a></li>
-                                <li><a href="#">Latest</a></li>
-                                <li><a href="#">Browse Archive</a></li>
-                                <li><a href="#">Video for web</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="footer__option__item">
-                            <h5>Newsletter</h5>
-                            <p>Videoprah is an award-winning, full-service production company specializing.</p>
-                            <form action="#">
-                                <input type="text" placeholder="Email">
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -330,15 +127,7 @@
             <div class="footer__copyright">
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <p class="footer__copyright__text">Copyright &copy;
-                            <script>
-                                document.write(new Date().getFullYear());
-                            </script>
-                            All rights reserved | This template is made with <i class="fa fa-heart-o"
-                                aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        <p>&copy; <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>
