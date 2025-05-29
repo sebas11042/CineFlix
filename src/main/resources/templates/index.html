@@ -31,7 +31,6 @@
     </div>
 
     <!-- Header Section Begin -->
-    <section class="portfolio nuevo">
         <header>
             <div class="container">
                 <div class="row">
@@ -60,7 +59,6 @@
                 <div id="mobile-menu-wrap"></div>
             </div>
         </header>
-    </section>
     <!-- Header End -->
 
     <!-- Hero Section Begin -->
@@ -72,37 +70,87 @@
             <div class="hero__item set-bg" data-setbg="img/hero/5.png"></div>
         </div>
     </section>
+    <br><br><br>
     <!-- Hero Section End -->
 
-    <!-- Portfolio Section Begin -->
-    <section class="portfolio nuevo">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <ul class="portfolio__filter">
-                        <li class="active" data-filter="*">Cartelera</li>
-                    </ul>
+    <!-- Portfolio Section Begin-->
+  <section class="team spad set-bg" data-setbg="img/team-bg.jpg">  
+    <h2 class="portfolio-title">ESTRENOS</h2>
+    <div class="container">
+        <div class="row portfolio__gallery">
+            <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasEstreno}">
+                <div class="portfolio__item">
+                    <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">
+                        <div class="product-label product-label--top-right"></div>
+                        <span class="new">NEW</span>
+                    </div>
+                    <div class="portfolio__item__text">
+                        <h4>
+                            <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" th:text="${pelicula.titulo}"></a>
+                        </h4>
+                        <ul>
+                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="row portfolio__gallery">
-                <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculas}">
-                    <div class="portfolio__item">
-                        <div class="portfolio__item__video set-bg"
-                             th:attr="data-setbg=${pelicula.imagenUrl}">
-                            <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}"></a>
-                        </div>
-                        <div class="portfolio__item__text">
-                            <h4 th:text="${pelicula.titulo}">Título</h4>
-                            <ul>
-                                <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
-                            </ul>
-                        </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Portfolio Section End -->
+
+    <!-- Portfolio Section Begin-->
+    <section class="portfolio nuevo">
+        <h2 class="portfolio-title">CARTELERA</h2>
+        <div class="row portfolio__gallery">
+            <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasOtras}">
+                <div class="portfolio__item">
+                    <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">
+                        <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}"></a>
+                    </div>
+                    <div class="portfolio__item__text">
+                        <h4 th:text="${pelicula.titulo}">Título</h4>
+                        <ul>
+                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Portfolio Section End -->
+
+
+    <!-- Preventa -->
+    <section class="preventa-wrapper">
+        <div class="preventa-section">
+            <h2 class="preventa-title">Próximamente</h2>
+            <div class="pelicula-slider">
+                <div class="pelicula-card" th:each="pelicula : ${peliculasProximas}">
+                    <div class="pelicula-img set-bg" th:attr="data-setbg=${pelicula.imagenUrl}"></div>
+                    <div class="pelicula-info">
+                        <h4 th:text="${pelicula.titulo}">Título</h4>
+                        <ul>
+                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
+                        </ul>
+                        <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" class="btn btn-danger btn-sm">Ver más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.set-bg').each(function () {
+                const bg = $(this).attr('data-setbg');
+                $(this).css('background-image', 'url(' + bg + ')');
+            });
+        });
+    </script>
+
 
     <!-- Footer Section Begin -->
     <footer class="footer">
@@ -127,7 +175,10 @@
             <div class="footer__copyright">
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <p>&copy; <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos reservados.</p>
+                        <p>&copy;
+                            <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos
+                            reservados.
+                        </p>
                     </div>
                 </div>
             </div>

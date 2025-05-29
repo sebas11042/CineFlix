@@ -1,21 +1,28 @@
 package com.cineflix.controller;
 
-import com.cineflix.entity.Pelicula;
-import com.cineflix.repository.PeliculaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cineflix.entity.Pelicula;
+import com.cineflix.service.PeliculaService;
+
 @RestController
-@RequestMapping("/api/peliculas")
 public class PeliculaController {
 
     @Autowired
-    private PeliculaRepository peliculaRepository;
+    private PeliculaService peliculaService;
 
-    @GetMapping
-    public List<Pelicula> getPeliculas() {
-        return peliculaRepository.findAll();
+    @GetMapping("/estrenos")
+    public List<Pelicula> getPeliculasEnEstreno() {
+        return peliculaService.obtenerPeliculasEnEstreno();
+    }
+
+    @GetMapping("/otras")
+    public List<Pelicula> getPeliculasNoEstrenoNiProximas() {
+        return peliculaService.obtenerPeliculasNoEstrenoNiProximas();
     }
 }
+

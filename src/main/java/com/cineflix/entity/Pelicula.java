@@ -26,6 +26,9 @@ public class Pelicula {
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    @Column(name = "fecha_salida", updatable = false)
+    private java.time.LocalDateTime fechaSalida;
+
     // Getters y setters
     public Integer getIdPelicula() {
         return idPelicula;
@@ -73,5 +76,13 @@ public class Pelicula {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public java.time.LocalDateTime getFechaSalida() {
+        return fechaSalida;
+    }
+
+    public void setFechaSalida(java.time.LocalDateTime fechaSalida) {
+        this.fechaSalida = fechaSalida;
     }
 }
