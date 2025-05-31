@@ -19,4 +19,5 @@ public class PeliculaViewController {
         model.addAttribute("peliculasProximas", peliculaService.obtenerPeliculasProximas());
         return "index";
     }
+      
 }

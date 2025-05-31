@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import com.cineflix.entity.Pelicula;
+import com.cineflix.repository.PeliculaRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +14,16 @@ import java.util.List;
 
 @Service
 public class PeliculaService {
+
+    private final PeliculaRepository peliculaRepository;
+
+    public PeliculaService(PeliculaRepository peliculaRepository) {
+        this.peliculaRepository = peliculaRepository;
+    }
+
+    public Pelicula store(Pelicula pelicula) {
+        return peliculaRepository.save(pelicula);
+    }
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -32,7 +43,7 @@ public class PeliculaService {
 
     private static class PeliculaRowMapper implements RowMapper<Pelicula> {
         @Override
-        public Pelicula mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Pelicula mapRow(@org.springframework.lang.NonNull ResultSet rs, int rowNum) throws SQLException {
             Pelicula pelicula = new Pelicula();
             pelicula.setTitulo(rs.getString("titulo"));
             pelicula.setSinopsis(rs.getString("sinopsis"));

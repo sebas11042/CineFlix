@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="CineFlix Template">
+    <meta name="keywords" content="Cine, Películas, HTML">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CINEFLIX</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+    <div class="breadcrumb-option spad set-bg" data-setbg="/breadcrumb-bg.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Nueva Pelicula</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<body class="nueva-pelicula">
+     <section class="portfolio nuevo">
+        <form th:action="@{/admin/guardarPelicula}" method="post" enctype="multipart/form-data" class="row"
+            id="formPelicula">
+
+            <!-- Vista previa de la imagen -->
+            <div class="col-md-4">
+                <div id="previewContainer">
+                    <img id="previewImage" src="/img/no-image.png" alt="Vista previa">
+                </div>
+
+                <!-- Drag and Drop -->
+                <div id="dropZone">
+                    Arrastra una imagen aquí o haz clic para subir
+                    <input type="file" id="imagenInput" name="imagenFile" accept="image/*" class="d-none">
+                </div>
+
+                <!-- URL oculta para compatibilidad (opcional) -->
+                <input type="hidden" id="imagenUrl" name="imagenUrl" th:value="${pelicula?.imagenUrl}">
+            </div>
+
+            <!-- Formulario de datos -->
+            <div class="col-md-8">
+                <div class="form-group mb-3">
+                    <label class="titulo" for="titulo">Título</label>
+                    <input type="text" class="form-control focus-color" id="titulo" name="titulo" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="titulo" for="sinopsis">Sinopsis</label>
+                    <textarea class="form-control focus-color" id="sinopsis" name="sinopsis" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="titulo" for="duracionMin">Duración (minutos)</label>
+                    <input type="number" class="form-control focus-color" id="duracionMin" name="duracionMin" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="titulo" for="trailerUrl">URL del tráiler</label>
+                    <input type="url" class="form-control focus-color" id="trailerUrl" name="trailerUrl" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="titulo" for="fechaSalida">Fecha de estreno</label>
+                    <input type="date" class="form-control focus-color" id="fechaSalida" name="fechaSalida" required>
+                </div>
+
+                <button type="submit" class="btn btn-danger">Guardar Película</button>
+            </div>
+
+        </form>
+    </section>
+
+     <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__top">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="footer__top__logo">
+                            <a href="#"><img src="img/logo.png" alt="Logo CineFlix"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="footer__top__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__copyright">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <p>&copy;
+                            <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos
+                            reservados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+    
+    <script src="/js/nueva-pelicula.js"></script>    
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/masonry.pkgd.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
