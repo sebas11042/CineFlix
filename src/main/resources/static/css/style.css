@@ -32,8 +32,12 @@ body {
   height: 100%;
   font-family: "Josefin Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
-  background: #1A1A1A;
+  background: #0a0119;
 }
+body {
+  background-color: #0a0119 !important;
+}
+
 
 h1,
 h2,
@@ -322,7 +326,7 @@ ol {
   background: transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 9;
-  background: #1A1A1A;
+  background: #0a0119;
 }
 
 .header__logo {
@@ -507,7 +511,7 @@ ol {
 }
 
 .hero__slider.owl-carousel .owl-dots button.active:after {
-  background: #ffffff;
+  background: #0a0119;
   height: 2px;
 }
 
@@ -1310,7 +1314,7 @@ ol {
   Logo
 -----------------------*/
 .logo {
-  background: #100028;
+  background: #0a0119;
   padding: 100px 20px;
 }
 
@@ -1425,7 +1429,7 @@ ol {
 }
 
 .preventa-wrapper {
-  background: #0a0119;
+  background-color: #0a0119;
   border: 2px solid #ddd;
   border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
@@ -1628,4 +1632,9 @@ ol {
   font-weight: bold;
   color: #fff;
   margin-bottom: 10px;
+}
+
+/* Icono de calendario blanco para input date en NuevaPelicula */
+#fechaSalida::-webkit-calendar-picker-indicator {
+    filter: invert(1);
 }

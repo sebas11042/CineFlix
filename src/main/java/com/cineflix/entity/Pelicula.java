@@ -1,6 +1,7 @@
 package com.cineflix.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Pelicula")
@@ -27,7 +28,7 @@ public class Pelicula {
     private String imagenUrl;
 
     @Column(name = "fecha_salida", updatable = false)
-    private java.time.LocalDateTime fechaSalida;
+    private LocalDate fechaSalida;
 
     // Getters y setters
     public Integer getIdPelicula() {
@@ -78,11 +79,11 @@ public class Pelicula {
         this.imagenUrl = imagenUrl;
     }
 
-    public java.time.LocalDateTime getFechaSalida() {
+    public LocalDate getFechaSalida() {
         return fechaSalida;
     }
 
-    public void setFechaSalida(java.time.LocalDateTime fechaSalida) {
+    public void setFechaSalida(LocalDate fechaSalida) {
         this.fechaSalida = fechaSalida;
     }
 }

@@ -3,13 +3,14 @@ package com.cineflix.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cineflix.entity.Pelicula;
 import com.cineflix.service.PeliculaService;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/admin")
 public class AdminController {
     private final PeliculaService peliculaService;
 
@@ -17,7 +18,7 @@ public class AdminController {
         this.peliculaService = peliculaService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping
     public String verIndexAdmin(Model model) {
         model.addAttribute("peliculasEstreno", peliculaService.obtenerPeliculasEnEstreno());
         model.addAttribute("peliculasOtras", peliculaService.obtenerPeliculasNoEstrenoNiProximas());
@@ -25,10 +26,15 @@ public class AdminController {
         return "indexAdmin";
     }
 
-    @GetMapping("/admin/nuevaPelicula")
+    @GetMapping("/nuevaPelicula")
     public String nuevaPeliculas(Model model) {
         model.addAttribute("pelicula", new Pelicula());
         return "NuevaPelicula";
     }
 
+    @PostMapping("/guardarPelicula")
+    public String guardarPelicula(Pelicula pelicula) {
+        peliculaService.store(pelicula);
+        return "redirect:/admin";
+    }
 }

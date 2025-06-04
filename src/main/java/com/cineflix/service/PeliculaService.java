@@ -50,7 +50,7 @@ public class PeliculaService {
             pelicula.setDuracionMin(rs.getInt("duracion_min"));
             pelicula.setTrailerUrl(rs.getString("trailer_url"));
             pelicula.setImagenUrl(rs.getString("imagen_url"));
-            pelicula.setFechaSalida(rs.getDate("fecha_salida").toLocalDate().atStartOfDay());
+            pelicula.setFechaSalida(rs.getDate("fecha_salida").toLocalDate());
             return pelicula;
         }
     }
