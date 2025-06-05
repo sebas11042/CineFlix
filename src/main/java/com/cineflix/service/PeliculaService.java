@@ -45,6 +45,7 @@ public class PeliculaService {
         @Override
         public Pelicula mapRow(@org.springframework.lang.NonNull ResultSet rs, int rowNum) throws SQLException {
             Pelicula pelicula = new Pelicula();
+            pelicula.setIdPelicula(rs.getInt("id_pelicula"));
             pelicula.setTitulo(rs.getString("titulo"));
             pelicula.setSinopsis(rs.getString("sinopsis"));
             pelicula.setDuracionMin(rs.getInt("duracion_min"));
@@ -53,5 +54,13 @@ public class PeliculaService {
             pelicula.setFechaSalida(rs.getDate("fecha_salida").toLocalDate());
             return pelicula;
         }
+    }
+
+    public Pelicula findById(Integer id) {
+        return peliculaRepository.findById(id).orElse(null);
+    }
+
+    public void deleteById(Integer id) {
+        peliculaRepository.deleteById(id);
     }
 }

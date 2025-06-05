@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="CineFlix Template">
+    <meta name="keywords" content="Cine, Películas, HTML">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CINEFLIX</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+
+</head>
+
+<body>
+  <div class="ticket-container">
+    
+    <!-- PASOS -->
+    <div class="pasos">
+      <span class="paso activo">Paso 1<br><strong>Boletos</strong></span>
+      <span class="paso">Paso 2<br><strong>Asientos</strong></span>
+      <span class="paso">Paso 3<br><strong>Pago</strong></span>
+    </div>
+
+    <div class="contenido">
+      <!-- Selección -->
+      <div class="seleccion">
+        <h2>Selecciona tus boletos</h2>
+        <p>Puedes comprar 10 boletos máximo por transacción.</p>
+
+        <div class="tipo-entrada">
+          <h3>TRADICIONAL</h3>
+
+          <div class="entrada">
+            <span class="nombre">ADULTO XE 2D</span>
+            <span class="precio">₡3,300</span>
+            <div class="cantidad">
+              <button class="menos">−</button>
+              <input type="number" value="1" min="0" max="10" readonly />
+              <button class="mas">+</button>
+            </div>
+          </div>
+
+          <div class="entrada">
+            <span class="nombre">3 ERA EDAD XE 2D</span>
+            <span class="precio">₡2,600</span>
+            <div class="cantidad">
+              <button class="menos">−</button>
+              <input type="number" value="0" min="0" max="10" readonly />
+              <button class="mas">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="continuar">CONTINUAR</button>
+      </div>
+
+      <!-- Resumen -->
+      <div class="resumen">
+        <h3>Resumen de compra</h3>
+
+        <div class="info-pelicula">
+          <img src="/img/bailarina.jpg" alt="Película" />
+          <p><strong>Película:</strong> Bailarina XE DOB</p>
+          <p><strong>Complejo:</strong> Cinépolis Paseo Metrópoli</p>
+          <p><strong>Fecha:</strong> 06 de junio de 2025</p>
+          <p><strong>Función:</strong> 1:50 PM</p>
+          <p><strong>Boletos:</strong> ADULTO XE 2D (1) (₡3,300)</p>
+        </div>
+
+        <hr />
+
+        <p class="nota">*Se realizará un cargo por servicio de ₡450 en cada boleto dentro de la orden.</p>
+        <h4>Total (IVA incluido): <span>₡3,300</span></h4>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+
 </head>
 
 <body>
@@ -30,34 +31,34 @@
         <div class="loader"></div>
     </div>
     <!-- Header Section Begin -->
-        <header>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-2">
-                        <div class="header__logo">
-                            <a href="/"><img src="img/logo/LOGO.png" alt="CineFlix Logo"></a>
-                            <div class="header__nav__social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-10">
-                        <div class="header__nav__option">
-                            <nav class="header__nav__menu mobile-menu">
-                                <ul>
-                                    <li class="active"><a href="/">Inicio</a></li>
-                                    <li><a href="/admin/nuevaPelicula">Contacto</a></li>
-                                </ul>
-                            </nav>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="header__logo">
+                        <a href="/"><img src="img/logo/LOGO.png" alt="CineFlix Logo"></a>
+                        <div class="header__nav__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
                         </div>
                     </div>
                 </div>
-                <div id="mobile-menu-wrap"></div>
+                <div class="col-lg-10">
+                    <div class="header__nav__option">
+                        <nav class="header__nav__menu mobile-menu">
+                            <ul>
+                                <li class="active"><a href="/">Inicio</a></li>
+                                <li><a href="/admin/nuevaPelicula">NUEVA PELICULA</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
-        </header>
+            <div id="mobile-menu-wrap"></div>
+        </div>
+    </header>
     <!-- Header End -->
 
     <!-- Hero Section Begin -->
@@ -73,34 +74,55 @@
     <!-- Hero Section End -->
 
     <!-- Portfolio Section Begin-->
-  <section class="team spad set-bg" data-setbg="img/team-bg.jpg">  
-    <h2 class="portfolio-title">ESTRENOS</h2>
-    <div class="container">
-        <div class="row portfolio__gallery">
-            <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasEstreno}">
-                <div class="portfolio__item">
-                    <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">
-                        <div class="product-label product-label--top-right"></div>
-                        <span class="new">NEW</span>
-                    </div>
-                    <div class="portfolio__item__text">
-                        <h4>
-                            <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" th:text="${pelicula.titulo}"></a>
-                        </h4>
-                        <ul>
-                            <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
-                        </ul>
+    <section class="team spad set-bg" data-setbg="img/team-bg.jpg">
+        <h2 class="portfolio-title">ESTRENOS</h2>
+        <div class="container">
+            <div class="row portfolio__gallery">
+                <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasEstreno}">
+                    <div class="portfolio__item">
+                        <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">
+                            <div class="product-label product-label--top-right"></div>
+                            <span class="new">NEW</span>
+                        </div>
+                        <div class="portfolio__item__text">
+                            <h4>
+                                <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" th:text="${pelicula.titulo}"></a>
+                            </h4>
+                            <ul>
+                                <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
+                            </ul>
+
+                            <div class="portfolio__item__text text-center">
+                             <p>ID recibido: <span th:text="${pelicula.idPelicula}">sin id</span></p>
+   
+                                <div class="btn-group-acciones">
+                                    <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
+                                        class="btn-accion btn-editar">Editar
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+
+                                    <form th:action="@{/admin/eliminarPelicula/{id}(id=${pelicula.idPelicula})}"
+                                        method="post"
+                                        onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
+                                        style="display: inline;">
+                                        <button type="submit" class="btn-accion btn-eliminar">
+                                            <i class="fa fa-trash"></i>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- Portfolio Section End -->
 
     <!-- Portfolio Section Begin-->
     <section class="portfolio nuevo">
+        <!-- src/main/resources/templates/indexAdmin.html -->
         <h2 class="portfolio-title">CARTELERA</h2>
         <div class="row portfolio__gallery">
             <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasOtras}">
@@ -113,9 +135,30 @@
                         <ul>
                             <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
                         </ul>
+                        <div class="portfolio__item__text text-center">
+                            
+                              <div class="btn-group-acciones">
+                                    <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
+                                        class="btn-accion btn-editar">Editar
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+
+                                    <form th:action="@{'/admin/eliminarPelicula/' + ${pelicula.idPelicula}}"
+                                        method="post"
+                                        onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
+                                        style="display: inline;">
+                                        <button type="submit" class="btn-accion btn-eliminar">
+                                            <i class="fa fa-trash"></i>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -132,6 +175,25 @@
                         <ul>
                             <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
                         </ul>
+
+                        <div class="portfolio__item__text text-center">
+                            <div class="btn-group-acciones">
+                                <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
+                                    class="btn-accion btn-editar">Editar
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+
+                                <form th:action="@{'/admin/eliminarPelicula/' + ${pelicula.idPelicula}}" method="post"
+                                    onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
+                                    style="display: inline;">
+                                    <button type="submit" class="btn-accion btn-eliminar">
+                                        <i class="fa fa-trash"></i>
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -185,7 +247,7 @@
     <!-- Footer Section End -->
 
     <!-- Js Plugins -->
-     
+
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>

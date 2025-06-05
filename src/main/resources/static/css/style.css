@@ -1638,3 +1638,174 @@ ol {
 #fechaSalida::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }
+
+/* Icono de editar e elimnar */
+/* Contenedor de los botones */
+.portfolio__item__text .btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* Botón Editar */
+.btn-editar {
+  background-color: transparent;
+  border: 1px solid;
+  color: #ffffff;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.btn-editar:hover {
+  background-color: #07b9ff;
+  color: #000;
+}
+
+/* Botón Eliminar */
+.btn-eliminar {
+  background-color: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.btn-eliminar:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/*---Paso 1---*/
+.ticket-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pasos {
+  display: flex;
+  justify-content: space-between;
+  color: #aaa;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.paso {
+  text-align: center;
+  flex: 1;
+}
+
+.paso.activo {
+  color: #2196f3;
+  border-bottom: 3px solid #2196f3;
+}
+
+.contenido {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.seleccion {
+  flex: 2;
+}
+
+.seleccion h2 {
+  color: #2196f3;
+  margin-bottom: 10px;
+}
+
+.tipo-entrada {
+  margin: 30px 0;
+}
+
+.entrada {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.nombre, .precio {
+  font-weight: bold;
+}
+
+.cantidad {
+  display: flex;
+  align-items: center;
+}
+
+.cantidad button {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: 1px solid #2196f3;
+  color: #2196f3;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cantidad input {
+  width: 40px;
+  text-align: center;
+  background: #000;
+  border: none;
+  color: #fff;
+  margin: 0 5px;
+}
+
+.continuar {
+  width: 100%;
+  background-color: #002b73;
+  color: #fff;
+  border: none;
+  padding: 15px;
+  border-radius: 40px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.resumen {
+  flex: 1;
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.resumen img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.resumen p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+hr {
+  margin: 15px 0;
+  border-color: #444;
+}
+
+.nota {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.resumen h4 {
+  margin-top: 10px;
+  color: #4fc3f7;
+  display: flex;
+  justify-content: space-between;
+}
