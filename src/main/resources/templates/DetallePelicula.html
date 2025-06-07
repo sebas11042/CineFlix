@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="CineFlix Template">
+    <meta name="keywords" content="Cine, Películas, HTML">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CINEFLIX</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+<body>
+
+<div class="container-detalle">
+
+  <!-- Parte principal -->
+  <div class="detalle-pelicula">
+    <img th:src="${pelicula.imagenUrl}" alt="Póster" class="poster">
+    <h1 class="titulo-detalle" th:text="${pelicula.titulo}">Título</h1>
+
+    <div class="info-extra">
+      <span class="badge-custom">M18</span>
+      <span class="badge-custom" th:text="${pelicula.duracionMin} + ' min'">93 min</span>
+      <span class="badge-custom">ANIMACIÓN</span>
+    </div>
+
+    <!-- Tráiler -->
+    <div class="trailer-container">
+      <h4>Tráiler</h4>
+      <iframe th:src="'https://www.youtube.com/embed/' + ${#strings.substringAfter(pelicula.trailerUrl, 'v=')}" 
+              frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Sinopsis -->
+    <div class="sinopsis">
+      <h4>Sinopsis</h4>
+      <p th:text="${pelicula.sinopsis}">Texto de la sinopsis...</p>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h5>CONSULTA MÁS HORARIOS</h5>
+    <select>
+      <option>Cartago, Costa Rica</option>
+    </select>
+    <select>
+      <option>Cinépolis Paseo Metrópoli</option>
+    </select>
+    <select>
+      <option>Mañana (06 junio)</option>
+    </select>
+
+    <hr />
+    <p><strong>Cinépolis Paseo Metrópoli</strong></p>
+    <p>SUB</p>
+    <div class="horarios">
+      <button>16:30</button>
+      <button>18:45</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

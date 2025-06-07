@@ -105,11 +105,10 @@
         <div class="row portfolio__gallery">
             <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasOtras}">
                 <div class="portfolio__item">
-                    <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">
-                        <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}"></a>
+                    <div class="portfolio__item__video set-bg" th:attr="data-setbg=${pelicula.imagenUrl}">                    
                     </div>
                     <div class="portfolio__item__text">
-                        <h4 th:text="${pelicula.titulo}">Título</h4>
+                         <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" th:text="${pelicula.titulo}"></a>
                         <ul>
                             <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
                         </ul>
@@ -128,7 +127,7 @@
                 <div class="pelicula-card" th:each="pelicula : ${peliculasProximas}">
                     <div class="pelicula-img set-bg" th:attr="data-setbg=${pelicula.imagenUrl}"></div>
                     <div class="pelicula-info">
-                        <h4 th:text="${pelicula.titulo}">Título</h4>
+                       <a th:href="@{'/pelicula/' + ${pelicula.idPelicula}}" th:text="${pelicula.titulo}"></a>
                         <ul>
                             <li th:text="'Duración: ' + ${pelicula.duracionMin} + ' min'">Duración</li>
                         </ul>

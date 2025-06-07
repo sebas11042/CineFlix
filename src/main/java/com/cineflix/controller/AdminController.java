@@ -70,4 +70,21 @@ public class AdminController {
         }
         return "redirect:/admin";
     }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable int id, Model model) {
+        Pelicula pelicula = peliculaService.findById(id);
+        if (pelicula != null) {
+            model.addAttribute("pelicula", pelicula);
+            return "EditarPelicula"; // Asegúrate de que editarPelicula.html existe en src/main/resources/templates
+        } else {
+            return "redirect:/"; // Redirigir a la página principal si no se encuentra la película
+        }
+    }
+
+    @PostMapping("/update")
+    public String update(Pelicula pelicula) {
+        peliculaService.store(pelicula);
+        return "redirect:/admin";
+    }
 }

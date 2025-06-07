@@ -96,7 +96,7 @@
                              <p>ID recibido: <span th:text="${pelicula.idPelicula}">sin id</span></p>
    
                                 <div class="btn-group-acciones">
-                                    <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
+                                    <a th:href="@{/admin/edit/{id}(id=${pelicula.idPelicula})}"
                                         class="btn-accion btn-editar">Editar
                                         <i class="fa fa-pencil"></i>
                                     </a>

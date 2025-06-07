@@ -40,6 +40,10 @@ public class PeliculaService {
         return jdbcTemplate.query("EXEC ObtenerPeliculasProximas;", new PeliculaRowMapper());
     }
 
+        public List<Pelicula> obtePelicula(int idPelicula) {
+        return jdbcTemplate.query("EXEC ObtenerPeliculaPorId @IdPelicula = ?", new PeliculaRowMapper());
+    }
+
 
     private static class PeliculaRowMapper implements RowMapper<Pelicula> {
         @Override
@@ -52,6 +56,7 @@ public class PeliculaService {
             pelicula.setTrailerUrl(rs.getString("trailer_url"));
             pelicula.setImagenUrl(rs.getString("imagen_url"));
             pelicula.setFechaSalida(rs.getDate("fecha_salida").toLocalDate());
+
             return pelicula;
         }
     }
@@ -63,4 +68,6 @@ public class PeliculaService {
     public void deleteById(Integer id) {
         peliculaRepository.deleteById(id);
     }
+
+
 }

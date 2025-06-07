@@ -39,7 +39,7 @@
 
 <body class="nueva-pelicula">
     <section class="portfolio nuevo">
-        <form th:action="@{/admin/actualizarPelicula}" th:object="${pelicula}" method="post" enctype="multipart/form-data" class="row" id="formPelicula">
+        <form th:action="@{/admin/update}" th:object="${pelicula}" method="post" enctype="multipart/form-data" class="row" id="formPelicula">
             <input type="hidden" th:field="*{idPelicula}" />
             <div class="col-md-4">
                 <div id="previewContainer">

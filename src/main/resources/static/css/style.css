@@ -1809,3 +1809,116 @@ hr {
   display: flex;
   justify-content: space-between;
 }
+
+/*---Pelicula Detalle---*/
+body {
+  background-color: #0a0119;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.container-detalle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 40px;
+}
+
+.detalle-pelicula {
+  flex: 2;
+}
+
+.sidebar {
+  flex: 1;
+  background-color: #121212;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.poster {
+  width: 180px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+.titulo-detalle {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #e50914;
+}
+
+.badge-custom {
+  background-color: #e50914;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.info-extra {
+  margin-top: 10px;
+}
+
+.trailer-container {
+  margin-top: 30px;
+}
+
+.trailer-container h4 {
+  color: #4fc3f7;
+  margin-bottom: 10px;
+}
+
+.trailer-container iframe {
+  width: 100%;
+  height: 360px;
+  border-radius: 10px;
+}
+
+.sinopsis {
+  margin-top: 30px;
+}
+
+.sinopsis h4 {
+  color: #2196f3;
+  margin-bottom: 10px;
+}
+
+.sidebar h5 {
+  color: #4fc3f7;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.sidebar select {
+  width: 100%;
+  background-color: #1f1f1f;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.sidebar p {
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.horarios button {
+  background-color: #1f1f1f;
+  color: #ccc;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  margin: 5px 5px 0 0;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.horarios button:hover {
+  background-color: #e50914;
+  color: #fff;
+  border-color: #e50914;
+}
