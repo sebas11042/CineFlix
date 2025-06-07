@@ -15,14 +15,45 @@
         rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
 </head>
+
+   <!-- Header Section Begin -->
+        <header>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="header__logo">
+                            <a href="/"><img src="/img/logo/LOGO.png" alt="CineFlix Logo"></a>
+                            <div class="header__nav__social">
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                                <a href="#"><i class="fa fa-instagram"></i></a>
+                                <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-10">
+                        <div class="header__nav__option">
+                            <nav class="header__nav__menu mobile-menu">
+                                <ul>
+                                    <li class="active"><a href="/">Inicio</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div id="mobile-menu-wrap"></div>
+            </div>
+        </header>
+    <!-- Header End -->
+
 <body>
 
 <div class="container-detalle">
@@ -54,27 +85,53 @@
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <h5>CONSULTA MÁS HORARIOS</h5>
     <select>
-      <option>Cartago, Costa Rica</option>
-    </select>
-    <select>
-      <option>Cinépolis Paseo Metrópoli</option>
-    </select>
-    <select>
-      <option>Mañana (06 junio)</option>
+      <input type="date" class="form-control" style="width: 100%;" />
     </select>
 
     <hr />
     <p><strong>Cinépolis Paseo Metrópoli</strong></p>
     <p>SUB</p>
     <div class="horarios">
-      <button>16:30</button>
+      <button onclick="window.location.href='/Paso1'">16:30</button>
       <button>18:45</button>
     </div>
   </div>
 
 </div>
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__top">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="footer__top__logo">
+                            <a href="#"><img src="img/logo.png" alt="Logo CineFlix"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="footer__top__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__copyright">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <p>&copy;
+                            <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos
+                            reservados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
 
 </body>
 </html>
