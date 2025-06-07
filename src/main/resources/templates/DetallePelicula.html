@@ -1,112 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="CineFlix Template">
-    <meta name="keywords" content="Cine, Películas, HTML">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>CINEFLIX</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/elegant-icons.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/magnific-popup.css">
+    <link rel="stylesheet" href="/css/slicknav.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
-   <!-- Header Section Begin -->
-        <header>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-2">
-                        <div class="header__logo">
-                            <a href="/"><img src="/img/logo/LOGO.png" alt="CineFlix Logo"></a>
-                            <div class="header__nav__social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-10">
-                        <div class="header__nav__option">
-                            <nav class="header__nav__menu mobile-menu">
-                                <ul>
-                                    <li class="active"><a href="/">Inicio</a></li>
-                                </ul>
-                            </nav>
+<body>
+    <!-- Header Begin -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="header__logo">
+                        <a href="/"><img src="/img/logo/LOGO.png" alt="CineFlix Logo"></a>
+                        <div class="header__nav__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
                         </div>
                     </div>
                 </div>
-                <div id="mobile-menu-wrap"></div>
+                <div class="col-lg-10">
+                    <div class="header__nav__option">
+                        <nav class="header__nav__menu mobile-menu">
+                            <ul>
+                                <li class="active"><a href="/">Inicio</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
-        </header>
+            <div id="mobile-menu-wrap"></div>
+        </div>
+    </header>
     <!-- Header End -->
 
-<body>
+    <div class="container-detalle d-flex flex-wrap p-5 gap-5 justify-content-center">
 
-<div class="container-detalle">
+        <!-- Parte principal -->
+        <div class="detalle-pelicula col-md-6">
+            <img th:src="${pelicula.imagenUrl}" alt="Póster" class="poster img-fluid mb-3">
+            <h1 class="titulo-detalle" th:text="${pelicula.titulo}">Título</h1>
 
-  <!-- Parte principal -->
-  <div class="detalle-pelicula">
-    <img th:src="${pelicula.imagenUrl}" alt="Póster" class="poster">
-    <h1 class="titulo-detalle" th:text="${pelicula.titulo}">Título</h1>
+            <div class="info-extra mb-3">
+                <span class="badge badge-warning">M18</span>
+                <span class="badge badge-info" th:text="${pelicula.duracionMin} + ' min'">Duración</span>
+                <span class="badge badge-primary">Animación</span>
+            </div>
 
-    <div class="info-extra">
-      <span class="badge-custom">M18</span>
-      <span class="badge-custom" th:text="${pelicula.duracionMin} + ' min'">93 min</span>
-      <span class="badge-custom">ANIMACIÓN</span>
+            <!-- Tráiler -->
+            <div class="trailer-container mb-4">
+                <h4>Tráiler</h4>
+                <iframe width="100%" height="315"
+                        th:src="'https://www.youtube.com/embed/' + ${#strings.substringAfter(pelicula.trailerUrl, 'v=')}"
+                        frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <!-- Sinopsis -->
+            <div class="sinopsis">
+                <h4>Sinopsis</h4>
+                <p th:text="${pelicula.sinopsis}">Texto de la sinopsis...</p>
+            </div>
+        </div>
+
+        <!-- Sidebar de funciones -->
+        <div class="sidebar col-md-4">
+            <h4 class="mb-4">Funciones Disponibles</h4>
+
+            <div th:if="${funciones != null and !funciones.isEmpty()}">
+                <div th:each="funcion : ${funciones}" class="mb-4 p-3 bg-dark text-white rounded shadow-sm">
+                    <p class="mb-1">
+                        <strong th:text="${funcion.sala.nombre}">Sala</strong> |
+                        <span th:text="${funcion.formato}">Formato</span> |
+                        <span th:text="${funcion.idioma}">Idioma</span>
+                    </p>
+                    <p class="mb-0">
+                        📅 <span th:text="${#dates.format(funcion.fecha, 'dd/MM/yyyy')}">Fecha</span>
+                        🕒 <span th:text="${funcion.hora}">Hora</span>
+                    </p>
+                    <button class="btn btn-warning mt-2 w-100"
+                            th:onclick="'window.location.href=\'/reserva/' + ${funcion.idFuncion} + '\'" >
+                        Reservar
+                    </button>
+                </div>
+            </div>
+
+            <div th:if="${funciones == null or funciones.isEmpty()}">
+                <p class="text-muted">No hay funciones disponibles para esta película.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Tráiler -->
-    <div class="trailer-container">
-      <h4>Tráiler</h4>
-      <iframe th:src="'https://www.youtube.com/embed/' + ${#strings.substringAfter(pelicula.trailerUrl, 'v=')}" 
-              frameborder="0" allowfullscreen></iframe>
-    </div>
-
-    <!-- Sinopsis -->
-    <div class="sinopsis">
-      <h4>Sinopsis</h4>
-      <p th:text="${pelicula.sinopsis}">Texto de la sinopsis...</p>
-    </div>
-  </div>
-
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <select>
-      <input type="date" class="form-control" style="width: 100%;" />
-    </select>
-
-    <hr />
-    <p><strong>Cinépolis Paseo Metrópoli</strong></p>
-    <p>SUB</p>
-    <div class="horarios">
-      <button onclick="window.location.href='/Paso1'">16:30</button>
-      <button>18:45</button>
-    </div>
-  </div>
-
-</div>
-    <!-- Footer Section Begin -->
-    <footer class="footer">
+    <!-- Footer Begin -->
+    <footer class="footer mt-5">
         <div class="container">
             <div class="footer__top">
                 <div class="row">
                     <div class="col-lg-6 col-md-6">
                         <div class="footer__top__logo">
-                            <a href="#"><img src="img/logo.png" alt="Logo CineFlix"></a>
+                            <a href="#"><img src="/img/logo.png" alt="Logo CineFlix"></a>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6">
@@ -122,16 +130,12 @@
             <div class="footer__copyright">
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <p>&copy;
-                            <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos
-                            reservados.
-                        </p>
+                        <p>&copy; <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
-    <!-- Footer Section End -->
-
+    <!-- Footer End -->
 </body>
 </html>

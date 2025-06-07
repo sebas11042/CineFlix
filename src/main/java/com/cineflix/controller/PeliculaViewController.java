@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.cineflix.entity.Funcion;
 import com.cineflix.entity.Pelicula;
 import com.cineflix.service.PeliculaService;
 
@@ -26,9 +27,12 @@ public class PeliculaViewController {
         Pelicula pelicula = peliculaService.findById(id);
         if (pelicula != null) {
             model.addAttribute("pelicula", pelicula);
+            // 👉 Aquí puedes agregar también las funciones disponibles:
+            List<Funcion> funciones = funcionService.obtenerFuncionesPorPelicula(id);
+            model.addAttribute("funciones", funciones);
             return "DetallePelicula";
         }
-        // Return a 404 error page if pelicula is not found
         return "error/404";
     }
+
 }
