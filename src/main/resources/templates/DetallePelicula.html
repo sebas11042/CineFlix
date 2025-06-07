@@ -6,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CINEFLIX</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/elegant-icons.css">
@@ -21,40 +19,39 @@
 </head>
 
 <body>
-    <!-- Header Begin -->
-    <header>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="header__logo">
-                        <a href="/"><img src="/img/logo/LOGO.png" alt="CineFlix Logo"></a>
-                        <div class="header__nav__social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-10">
-                    <div class="header__nav__option">
-                        <nav class="header__nav__menu mobile-menu">
-                            <ul>
-                                <li class="active"><a href="/">Inicio</a></li>
-                            </ul>
-                        </nav>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="header__logo">
+                    <a href="/"><img src="/img/logo/LOGO.png" alt="CineFlix Logo"></a>
+                    <div class="header__nav__social">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="#"><i class="fa fa-youtube-play"></i></a>
                     </div>
                 </div>
             </div>
-            <div id="mobile-menu-wrap"></div>
+            <div class="col-lg-10">
+                <div class="header__nav__option">
+                    <nav class="header__nav__menu mobile-menu">
+                        <ul>
+                            <li class="active"><a href="/">Inicio</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-    </header>
-    <!-- Header End -->
+        <div id="mobile-menu-wrap"></div>
+    </div>
+</header>
 
-    <div class="container-detalle d-flex flex-wrap p-5 gap-5 justify-content-center">
-
+<!-- CONTENIDO PRINCIPAL -->
+<div class="container py-5">
+    <div class="row">
         <!-- Parte principal -->
-        <div class="detalle-pelicula col-md-6">
+        <div class="col-lg-8 col-md-7 mb-4">
             <img th:src="${pelicula.imagenUrl}" alt="Póster" class="poster img-fluid mb-3">
             <h1 class="titulo-detalle" th:text="${pelicula.titulo}">Título</h1>
 
@@ -64,15 +61,17 @@
                 <span class="badge badge-primary">Animación</span>
             </div>
 
-            <!-- Tráiler -->
             <div class="trailer-container mb-4">
                 <h4>Tráiler</h4>
-                <iframe width="100%" height="315"
-                        th:src="'https://www.youtube.com/embed/' + ${#strings.substringAfter(pelicula.trailerUrl, 'v=')}"
-                        frameborder="0" allowfullscreen></iframe>
+                <div th:if="${pelicula.trailerUrl != null and #strings.contains(pelicula.trailerUrl, 'v=')}">
+                    <iframe th:src="'https://www.youtube.com/embed/' + ${#strings.substringAfter(pelicula.trailerUrl, 'v=')}"
+                            frameborder="0" allowfullscreen width="100%" height="315"></iframe>
+                </div>
+                <div th:unless="${pelicula.trailerUrl != null and #strings.contains(pelicula.trailerUrl, 'v=')}">
+                    <p class="text-muted">Tráiler no disponible o formato inválido.</p>
+                </div>
             </div>
 
-            <!-- Sinopsis -->
             <div class="sinopsis">
                 <h4>Sinopsis</h4>
                 <p th:text="${pelicula.sinopsis}">Texto de la sinopsis...</p>
@@ -80,24 +79,25 @@
         </div>
 
         <!-- Sidebar de funciones -->
-        <div class="sidebar col-md-4">
-            <h4 class="mb-4">Funciones Disponibles</h4>
+        <div class="col-lg-4 col-md-5">
+            <h4 class="mb-3">Funciones Disponibles</h4>
 
             <div th:if="${funciones != null and !funciones.isEmpty()}">
-                <div th:each="funcion : ${funciones}" class="mb-4 p-3 bg-dark text-white rounded shadow-sm">
-                    <p class="mb-1">
-                        <strong th:text="${funcion.sala.nombre}">Sala</strong> |
-                        <span th:text="${funcion.formato}">Formato</span> |
-                        <span th:text="${funcion.idioma}">Idioma</span>
-                    </p>
-                    <p class="mb-0">
-                        📅 <span th:text="${#dates.format(funcion.fecha, 'dd/MM/yyyy')}">Fecha</span>
-                        🕒 <span th:text="${funcion.hora}">Hora</span>
-                    </p>
-                    <button class="btn btn-warning mt-2 w-100"
-                            th:onclick="'window.location.href=\'/reserva/' + ${funcion.idFuncion} + '\'" >
-                        Reservar
-                    </button>
+                <div th:each="funcion : ${funciones}" class="mb-3 p-3 bg-dark text-white rounded shadow-sm">
+                    <div>
+                        <p class="fw-bold mb-1" th:text="'Sala ' + ${funcion.sala} + ' | ' + ${funcion.formato} + ' | ' + ${funcion.idioma}">Sala</p>
+                        <p class="mb-2">
+                            <i class="fa fa-calendar text-secondary"></i>
+                            <span th:text="${funcion.fecha}">Fecha</span>
+                            &nbsp;
+                            <i class="fa fa-clock-o text-secondary"></i>
+                            <span th:text="${funcion.hora}">Hora</span>
+                        </p>
+                        <a th:href="@{/reserva/{id}(id=${funcion.idFuncion})}"
+                           class="btn btn-warning w-100 fw-bold">
+                           Reservar
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -106,36 +106,37 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Footer Begin -->
-    <footer class="footer mt-5">
-        <div class="container">
-            <div class="footer__top">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="footer__top__logo">
-                            <a href="#"><img src="/img/logo.png" alt="Logo CineFlix"></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="footer__top__social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                        </div>
+<!-- FOOTER -->
+<footer class="footer mt-5">
+    <div class="container">
+        <div class="footer__top">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="footer__top__logo">
+                        <a href="#"><img src="/img/logo.png" alt="Logo CineFlix"></a>
                     </div>
                 </div>
-            </div>
-            <div class="footer__copyright">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <p>&copy; <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos reservados.</p>
+                <div class="col-lg-6 col-md-6">
+                    <div class="footer__top__social">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="#"><i class="fa fa-youtube-play"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-    </footer>
-    <!-- Footer End -->
+        <div class="footer__copyright">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <p>&copy; <script>document.write(new Date().getFullYear());</script> CineFlix. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>

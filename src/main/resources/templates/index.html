@@ -133,16 +133,25 @@
     </section>
     <!-- Próximamente End -->
 
-    <!-- Scripts -->
-    <script src="js/jquery.min.js"></script>
+    <!-- JS Plugins (orden correcto con jQuery CDN primero) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
+            $('#preloder').fadeOut(300); // Oculta loader
             $('.set-bg').each(function () {
                 const bg = $(this).attr('data-setbg');
                 $(this).css('background-image', 'url(' + bg + ')');
             });
         });
     </script>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/masonry.pkgd.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
 
     <!-- Footer Begin -->
     <footer class="footer">
@@ -174,14 +183,5 @@
         </div>
     </footer>
     <!-- Footer End -->
-
-    <!-- JS Plugins -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/mixitup.min.js"></script>
-    <script src="js/masonry.pkgd.min.js"></script>
-    <script src="js/jquery.slicknav.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>
