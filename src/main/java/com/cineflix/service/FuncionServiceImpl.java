@@ -34,4 +34,10 @@ public class FuncionServiceImpl implements FuncionService {
             return dto;
         }).collect(Collectors.toList());
     }
+    @Override
+public Funcion obtenerPorId(Integer idFuncion) {
+    return funcionRepository.findById(idFuncion)
+            .orElseThrow(() -> new RuntimeException("Función no encontrada con ID: " + idFuncion));
+}
+
 }
