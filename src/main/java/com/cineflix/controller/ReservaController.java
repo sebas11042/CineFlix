@@ -27,8 +27,8 @@ public class ReservaController {
 
     // Paso 1: Mostrar formulario de selección de boletos
     @GetMapping("/paso1/{idFuncion}")
-    public String mostrarPaso1(@PathVariable Long idFuncion, Model model) {
-       Funcion funcion = funcionService.obtenerPorId(idFuncion.intValue());
+    public String mostrarPaso1(@PathVariable Integer idFuncion, Model model) {
+        Funcion funcion = funcionService.obtenerPorId(idFuncion);
         List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdad(); // solo por edad, ignora formato
 
         ReservaDTO reserva = new ReservaDTO();
@@ -49,14 +49,14 @@ public class ReservaController {
                                 @ModelAttribute("reserva") ReservaDTO reserva,
                                 Model model) {
 
-        Map<Long, Integer> boletosSeleccionados = new HashMap<>();
+        Map<Integer, Integer> boletosSeleccionados = new HashMap<>();
         int totalBoletos = 0;
         BigDecimal totalFinal = BigDecimal.ZERO;
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             if (entry.getKey().startsWith("boletos[")) {
                 try {
-                    Long idTipoPrecio = Long.parseLong(entry.getKey().replace("boletos[", "").replace("]", ""));
+                    Integer idTipoPrecio = Integer.parseInt(entry.getKey().replace("boletos[", "").replace("]", ""));
                     Integer cantidad = Integer.parseInt(entry.getValue());
 
                     if (cantidad > 0) {
@@ -64,7 +64,7 @@ public class ReservaController {
                         totalBoletos += cantidad;
 
                         TipoPrecio tipo = tipoPrecioService.obtenerPorId(idTipoPrecio);
-                        BigDecimal precioUnitario = BigDecimal.valueOf(tipo.getPrecio()).add(BigDecimal.valueOf(450)); // cargo de servicio
+                        BigDecimal precioUnitario = tipo.getPrecio().add(BigDecimal.valueOf(450)); // cargo de servicio
                         totalFinal = totalFinal.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
                     }
                 } catch (NumberFormatException e) {

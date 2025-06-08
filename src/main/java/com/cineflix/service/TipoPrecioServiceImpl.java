@@ -28,4 +28,9 @@ public class TipoPrecioServiceImpl implements TipoPrecioService {
 
         return new ArrayList<>(unicos.values());
     }
+        @Override
+    public TipoPrecio obtenerPorId(Integer id) {
+        return tipoPrecioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipo de precio no encontrado con ID: " + id));
+    }
 }

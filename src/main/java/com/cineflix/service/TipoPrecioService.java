@@ -4,4 +4,6 @@ import java.util.List;
 
 public interface TipoPrecioService {
     List<TipoPrecio> obtenerTiposPorEdad();
+    TipoPrecio obtenerPorId(Integer id); // 👈 nuevo método requerido
+
 }

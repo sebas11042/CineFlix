@@ -18,7 +18,7 @@ public class ReservaDTO {
     private LocalTime hora;
 
     // Boletos seleccionados: idTipoPrecio → cantidad
-    private Map<Long, Integer> boletosSeleccionados;
+    private Map<Integer, Integer> boletosSeleccionados;
 
     // Asientos seleccionados en paso 2
     private List<Asiento> asientosSeleccionados;
@@ -70,11 +70,11 @@ public class ReservaDTO {
         this.hora = hora;
     }
 
-    public Map<Long, Integer> getBoletosSeleccionados() {
+    public Map<Integer, Integer> getBoletosSeleccionados() {
         return boletosSeleccionados;
     }
 
-    public void setBoletosSeleccionados(Map<Long, Integer> boletosSeleccionados) {
+    public void setBoletosSeleccionados(Map<Integer, Integer> boletosSeleccionados) {
         this.boletosSeleccionados = boletosSeleccionados;
     }
 
