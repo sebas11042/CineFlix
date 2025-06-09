@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Reserva - Paso 2</title>
+    <!-- CSS Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/elegant-icons.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/magnific-popup.css">
+    <link rel="stylesheet" href="/css/slicknav.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            background-color: #0f0c1b;
-            color: white;
-        }
-    </style>
 </head>
 <header>
     <div class="container mb-4">
@@ -43,24 +43,31 @@
                 <div class="leyenda mb-3">
                     <span class="seleccionado">Selección</span>
                     <span class="ocupado">Ocupado</span>
-                    <span class="tradicional">Tradicional</span>
+                    <span class="tradicional">Disponible</span>
                 </div>
 
                 <div class="pantalla">Pantalla</div>
 
                 <form method="post" th:action="@{/reserva/paso2}">
                     <div class="asientos-grid">
-                        <div th:each="letra : ${letrasFilas}" class="fila-asientos" style="align-items: center; margin-bottom: 6px;">
-                            <span class="letra-fila" th:text="${letra}" style="font-weight: bold; width: 30px; display: inline-block; text-align: right; margin-right: 8px;"></span>
+                        <div th:each="letra : ${letrasFilas}" class="fila-asientos"
+                            style="align-items: center; margin-bottom: 6px;">
+                            <span class="letra-fila" th:text="${letra}"
+                                style="font-weight: bold; width: 30px; display: inline-block; text-align: right; margin-right: 8px;"></span>
                             <div style="display: flex; gap: 4px;">
                                 <button th:each="asiento : ${asientos}" th:if="${asiento.fila} == ${letra}"
-                                        th:id="'asiento-' + ${asiento.id_asiento}"
-                                        th:text="${asiento.columna}"
-                                        th:classappend="${#lists.contains(ocupados.?[#this.id_asiento], asiento.id_asiento)} ? 'ocupado' : 'disponible'"
-                                        th:disabled="${#lists.contains(ocupados.?[#this.id_asiento], asiento.id_asiento)}"
-                                        th:attr="data-id=${asiento.id_asiento}"
-                                        onclick="toggleSeleccion(this)"
-                                        style="margin: 0;">
+                                    th:id="'asiento-' + ${asiento.id_asiento}"
+                                    th:classappend="${ocupados.contains(asiento.id_asiento)} ? 'ocupado1' : 'tradicional1'"
+                                    th:disabled="${ocupados.contains(asiento.id_asiento)}"
+                                    th:attr="data-id=${asiento.id_asiento}" onclick="toggleSeleccion(this)"
+                                    style="margin: 0; position: relative;">
+                                    <span th:if="${ocupados.contains(asiento.id_asiento)}"
+                                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                                        <span
+                                            style="color: #e53935; font-weight: bold; font-size: 15px; line-height: 1;">[[${asiento.columna}]]</span>
+                                    </span>
+                                    <span th:unless="${ocupados.contains(asiento.id_asiento)}"
+                                        th:text="${asiento.columna}"></span>
                                 </button>
                             </div>
                         </div>
@@ -118,7 +125,9 @@
             // Aquí puedes hacer un fetch/ajax a un endpoint para cambiar el estado en el backend
             // y luego actualizar la clase del botón según la respuesta
             // Ejemplo:
-            fetch('/asiento/cambiarEstado/' + idAsiento, { method: 'POST' })
+            fetch('/asiento/cambiarEstado/' + idAsiento, {
+                method: 'POST'
+            })
                 .then(resp => resp.json())
                 .then(data => {
                     if (data.ocupado) {

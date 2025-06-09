@@ -26,12 +26,11 @@ public class AsientoServiceImpl implements AsientoService {
     }
 
     @SuppressWarnings("unchecked")
+
     @Override
-    public List<Asiento> obtenerAsientosOcupadosPorFuncion(Integer idFuncion) {
-        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosReservadosPorFuncion :idFuncion", Asiento.class);
-        query.setParameter("idFuncion", idFuncion);
-
-        return (List<Asiento>) query.getResultList(); // 👈 esto ya es seguro con el cast y la anotación
+    public List<Asiento> obtenerAsientosOcupados(int idSala) {
+        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosOcupados :idSala", Asiento.class);
+        query.setParameter("idSala", idSala);
+        return query.getResultList();
     }
-
 }

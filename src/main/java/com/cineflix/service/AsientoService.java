@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AsientoService {
     List<Asiento> obtenerAsientosPorSala(Sala sala);
-    List<Asiento> obtenerAsientosOcupadosPorFuncion(Integer idFuncion); // utiliza procedimiento almacenado
+    List<Asiento> obtenerAsientosOcupados(int idfuncion);
 }

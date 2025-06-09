@@ -1159,7 +1159,7 @@ ol {
 }
 
 .about__text .services__item .services__item__icon:after {
-  border-color: #281A3E;
+  border-color: #281a3e;
 }
 
 .about__text__desc {
@@ -1200,7 +1200,7 @@ ol {
 
 .testimonial__text {
   padding: 30px 40px 25px 30px;
-  border: 1px solid #3D3A64;
+  border: 1px solid #3d3a64;
   margin-bottom: 25px;
   position: relative;
   z-index: 9;
@@ -1951,11 +1951,6 @@ body {
   cursor: pointer;
 }
 
-.ocupado {
-  background-color: #333;
-  cursor: not-allowed;
-}
-
 .seleccionado {
   background-color: #ffc107;
   color: black;
@@ -1993,7 +1988,7 @@ body {
 }
 
 .leyenda .ocupado::before {
-  background-color: #333;
+  background-color: #e53935;
 }
 
 .leyenda .tradicional::before {
@@ -2014,12 +2009,6 @@ button.continuar {
   border: none;
   padding: 10px;
   border-radius: 8px;
-}
-
-.ocupado {
-  background: #b71c1c;
-  color: #fff;
-  cursor: not-allowed;
 }
 
 .letra-fila {
@@ -2067,11 +2056,19 @@ button.continuar {
 }
 
 .leyenda .ocupado::before {
-  background-color: #333;
+  background-color: #e53935;
 }
 
 .leyenda .tradicional::before {
   background-color: #3f84e5;
+}
+
+.tradicional1 {
+  background-color: #3f84e5;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .resumen {
@@ -2091,10 +2088,18 @@ button.continuar {
 }
 
 .ocupado {
-  background: #b71c1c;
+  background: #e53935 !important;
   color: #fff;
   cursor: not-allowed;
 }
+
+.ocupado1 {
+  background: #e53935 !important;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+
 
 /* Pantalla */
 .pantalla {
@@ -2110,4 +2115,21 @@ button.continuar {
   font-weight: bold;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.asientos-grid button.ocupado {
+    background: #e53935 !important;
+    color: #fff !important;
+    border: 2px solid #b71c1c;
+    cursor: not-allowed;
+    opacity: 0.95;
+}
+
+.asientos-grid button.ocupado span {
+    color: #fff !important;
+}
+.asientos-grid button.ocupado span span {
+    color: #fff !important;
+    font-size: 10px;
+    font-weight: normal;
 }

@@ -8,5 +8,5 @@ import java.util.List;
 public interface FuncionService {
     List<FuncionViewDTO> obtenerFuncionesPorPelicula(int idPelicula);
         Funcion obtenerPorId(Integer idFuncion); // NUEVO MÉTODO
-
+    
 }
