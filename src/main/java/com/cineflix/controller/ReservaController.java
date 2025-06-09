@@ -1,8 +1,10 @@
 package com.cineflix.controller;
 
 import com.cineflix.dto.ReservaDTO;
+import com.cineflix.entity.Asiento;
 import com.cineflix.entity.Funcion;
 import com.cineflix.entity.TipoPrecio;
+import com.cineflix.service.AsientoService;
 import com.cineflix.service.FuncionService;
 import com.cineflix.service.TipoPrecioService;
 
@@ -25,12 +27,14 @@ public class ReservaController {
     @Autowired
     private TipoPrecioService tipoPrecioService;
 
+    @Autowired
+    private AsientoService asientoService;
+
     // Paso 1: Mostrar formulario de selección de boletos
     @GetMapping("/paso1/{idFuncion}")
     public String mostrarPaso1(@PathVariable Integer idFuncion, Model model) {
         Funcion funcion = funcionService.obtenerPorId(idFuncion);
 
-        // ✅ Filtrar precios por formato de la función (2D/3D)
         List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(funcion.getFormato());
 
         ReservaDTO reserva = new ReservaDTO();
@@ -39,14 +43,14 @@ public class ReservaController {
         reserva.setSala(funcion.getSala());
         reserva.setFecha(funcion.getFecha());
         reserva.setHora(funcion.getHora());
-        reserva.setFormato(funcion.getFormato()); // ✅ Se guarda el formato de la función
+        reserva.setFormato(funcion.getFormato());
 
         model.addAttribute("reserva", reserva);
         model.addAttribute("tiposPrecio", tiposPrecio);
         return "reserva/paso1";
     }
 
-    // Paso 1: Procesar boletos seleccionados y guardar en sesión
+    // Paso 1: Procesar boletos seleccionados
     @PostMapping("/paso1")
     public String procesarPaso1(@RequestParam Map<String, String> params,
                                 @ModelAttribute("reserva") ReservaDTO reserva,
@@ -67,26 +71,24 @@ public class ReservaController {
                         totalBoletos += cantidad;
 
                         TipoPrecio tipo = tipoPrecioService.obtenerPorId(idTipoPrecio);
-                        BigDecimal precioUnitario = tipo.getPrecio().add(BigDecimal.valueOf(450)); // cargo de servicio
+                        BigDecimal precioUnitario = tipo.getPrecio().add(BigDecimal.valueOf(450));
                         totalFinal = totalFinal.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
                     }
                 } catch (NumberFormatException e) {
-                    // Ignorar errores de parseo
+                    // ignorar errores
                 }
             }
         }
 
         if (totalBoletos == 0) {
             model.addAttribute("error", "Debes seleccionar al menos un boleto.");
-            List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato());
-            model.addAttribute("tiposPrecio", tiposPrecio);
+            model.addAttribute("tiposPrecio", tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato()));
             return "reserva/paso1";
         }
 
         if (totalBoletos > 10) {
             model.addAttribute("error", "No puedes seleccionar más de 10 boletos por transacción.");
-            List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato());
-            model.addAttribute("tiposPrecio", tiposPrecio);
+            model.addAttribute("tiposPrecio", tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato()));
             return "reserva/paso1";
         }
 
@@ -95,4 +97,42 @@ public class ReservaController {
 
         return "redirect:/reserva/paso2";
     }
+
+    // Paso 2: Mostrar asientos de la sala
+    @GetMapping("/paso2")
+    public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
+        List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
+        List<Asiento> asientosOcupados = asientoService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
+
+        model.addAttribute("asientos", asientosSala);
+        model.addAttribute("ocupados", asientosOcupados);
+        return "reserva/paso2";
+    }
+
+// Paso 2: Procesar selección de asientos
+@PostMapping("/paso2")
+public String procesarPaso2(@RequestParam("asientos") List<Integer> idsAsientosSeleccionados,
+                            @ModelAttribute("reserva") ReservaDTO reserva,
+                            Model model) {
+
+    int totalBoletos = reserva.getBoletosSeleccionados()
+                              .values().stream().mapToInt(Integer::intValue).sum();
+
+    if (idsAsientosSeleccionados.size() != totalBoletos) {
+        model.addAttribute("error", "Debes seleccionar exactamente " + totalBoletos + " asientos.");
+        model.addAttribute("asientos", asientoService.obtenerAsientosPorSala(reserva.getSala()));
+        model.addAttribute("ocupados", asientoService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion()));
+        return "reserva/paso2";
+    }
+
+    List<Asiento> seleccionados = idsAsientosSeleccionados.stream().map(id -> {
+        Asiento a = new Asiento();
+        a.setId_asiento(id);
+        return a;
+    }).toList();
+
+    reserva.setAsientosSeleccionados(seleccionados);
+    return "redirect:/reserva/paso3";
+}
+
 }
