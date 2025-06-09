@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva - Paso 1</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .ticket-container { display: flex; flex-direction: column; padding: 20px; }
+        .pasos { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .paso { text-align: center; font-weight: bold; }
+        .paso.activo { color: #ffc107; }
+        .contenido { display: flex; gap: 40px; }
+        .seleccion, .resumen { flex: 1; }
+        .entrada { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cantidad { display: flex; align-items: center; gap: 5px; }
+        .cantidad input {
+            width: 60px;
+            text-align: center;
+            color: #000 !important; /* Asegura texto negro */
+            background-color: #232020; /* Fondo blanco para contraste */
+            border: 1px solid #000000;
+        }
+        .info-pelicula img {
+        max-width: 400px;
+        height: 300px;
+        border-radius: 10px;
+        display: block;
+        margin: 0 auto 10px auto;
+    }
+        .continuar { margin-top: 30px; width: 100%; }
+    </style>
+</head>
+<body>
+<div class="ticket-container">
+    <!-- Pasos -->
+    <div class="pasos">
+        <span class="paso activo">Paso 1<br><strong>Boletos</strong></span>
+        <span class="paso">Paso 2<br><strong>Asientos</strong></span>
+        <span class="paso">Paso 3<br><strong>Pago</strong></span>
+    </div>
+
+    <div class="contenido">
+        <!-- Selección -->
+        <div class="seleccion">
+            <h2>Selecciona tus boletos</h2>
+            <p>Puedes comprar 10 boletos máximo por transacción.</p>
+
+            <form method="post" th:action="@{/reserva/paso1}">
+                <div th:each="tipo : ${tiposPrecio}" class="entrada">
+                    <span class="nombre" th:text="${#strings.toUpperCase(tipo.edadTipo)}">ADULTO</span>
+                    <span class="precio" th:text="'₡' + ${tipo.precio}">₡0000</span>
+                    <div class="cantidad">
+                        <button type="button" class="menos btn btn-secondary btn-sm">−</button>
+                        <input type="number"
+                               th:name="'boletos[' + ${tipo.id_tipo_precio} + ']'"
+                               value="0" min="0" max="10" readonly class="form-control"/>
+                        <button type="button" class="mas btn btn-secondary btn-sm">+</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-warning continuar">CONTINUAR</button>
+            </form>
+        </div>
+
+        <!-- Resumen -->
+        <div class="resumen">
+            <h3>Resumen de compra</h3>
+            <div class="info-pelicula">
+                <img th:src="${reserva.pelicula.imagenUrl}" alt="Película" class="img-fluid mb-2"/>
+                <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
+                <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
+                <p><strong>Fecha:</strong> <span th:text="${reserva.fecha}">dd/MM/yyyy</span></p>
+                <p><strong>Función:</strong> <span th:text="${reserva.hora}">HH:mm</span></p>
+            </div>
+
+            <hr>
+            <p class="nota">*Se realizará un cargo por servicio de ₡450 en cada boleto dentro de la orden.</p>
+            <h4>Total (IVA incluido): <span id="totalFinal">₡0</span></h4>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll(".menos").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const input = btn.nextElementSibling;
+            const value = parseInt(input.value);
+            if (value > 0) input.value = value - 1;
+            actualizarTotal();
+        });
+    });
+
+    document.querySelectorAll(".mas").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const input = btn.previousElementSibling;
+            const value = parseInt(input.value);
+            if (value < 10) input.value = value + 1;
+            actualizarTotal();
+        });
+    });
+
+    function actualizarTotal() {
+        let total = 0;
+        document.querySelectorAll(".entrada").forEach(entry => {
+            const cantidad = parseInt(entry.querySelector("input").value);
+            const precioText = entry.querySelector(".precio").innerText.replace("₡", "").replace(",", "");
+            const precio = parseFloat(precioText);
+            total += (precio + 450) * cantidad;
+        });
+        document.getElementById("totalFinal").innerText = "₡" + total.toLocaleString("es-CR");
+    }
+</script>
+</body>
+</html>
