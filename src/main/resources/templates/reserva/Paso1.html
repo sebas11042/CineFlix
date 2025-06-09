@@ -23,7 +23,7 @@
         }
         .info-pelicula img {
         max-width: 400px;
-        height: 300px;
+        height: auto;
         border-radius: 10px;
         display: block;
         margin: 0 auto 10px auto;
@@ -31,6 +31,17 @@
         .continuar { margin-top: 30px; width: 100%; }
     </style>
 </head>
+<header>
+    <div class="container mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/" class="d-flex align-items-center">
+                <img src="/img/logo/LOGO.png" alt="CineFlix Logo" style="height: 80px;">
+            </a>
+        </div>
+        <hr style="border-color: #444;">
+    </div>
+</header>
+
 <body>
 <div class="ticket-container">
     <!-- Pasos -->
@@ -65,7 +76,7 @@
 
         <!-- Resumen -->
         <div class="resumen">
-            <h3>Resumen de compra</h3>
+            <h3 style="color: #007bff;">Resumen de compra</h3>
             <div class="info-pelicula">
                 <img th:src="${reserva.pelicula.imagenUrl}" alt="Película" class="img-fluid mb-2"/>
                 <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
@@ -112,4 +123,5 @@
     }
 </script>
 </body>
+
 </html>
