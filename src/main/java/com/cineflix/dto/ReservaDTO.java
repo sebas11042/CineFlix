@@ -17,6 +17,8 @@ public class ReservaDTO {
     private LocalDate fecha;
     private LocalTime hora;
 
+    private String formato; // ✅ NUEVO: 2D, 3D, etc.
+
     // Boletos seleccionados: idTipoPrecio → cantidad
     private Map<Integer, Integer> boletosSeleccionados;
 
@@ -26,9 +28,9 @@ public class ReservaDTO {
     // Total con IVA y cargos
     private BigDecimal total;
 
-    private String metodoPago; // tarjeta o PayPal, se usará en paso 3
+    private String metodoPago; // tarjeta o PayPal
 
-    // Getters y Setters
+    // === GETTERS Y SETTERS ===
 
     public Integer getIdFuncion() {
         return idFuncion;
@@ -68,6 +70,14 @@ public class ReservaDTO {
 
     public void setHora(LocalTime hora) {
         this.hora = hora;
+    }
+
+    public String getFormato() {
+        return formato;
+    }
+
+    public void setFormato(String formato) {
+        this.formato = formato;
     }
 
     public Map<Integer, Integer> getBoletosSeleccionados() {

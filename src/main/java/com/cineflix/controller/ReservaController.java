@@ -29,7 +29,9 @@ public class ReservaController {
     @GetMapping("/paso1/{idFuncion}")
     public String mostrarPaso1(@PathVariable Integer idFuncion, Model model) {
         Funcion funcion = funcionService.obtenerPorId(idFuncion);
-        List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdad(); // solo por edad, ignora formato
+
+        // ✅ Filtrar precios por formato de la función (2D/3D)
+        List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(funcion.getFormato());
 
         ReservaDTO reserva = new ReservaDTO();
         reserva.setIdFuncion(funcion.getIdFuncion());
@@ -37,6 +39,7 @@ public class ReservaController {
         reserva.setSala(funcion.getSala());
         reserva.setFecha(funcion.getFecha());
         reserva.setHora(funcion.getHora());
+        reserva.setFormato(funcion.getFormato()); // ✅ Se guarda el formato de la función
 
         model.addAttribute("reserva", reserva);
         model.addAttribute("tiposPrecio", tiposPrecio);
@@ -68,29 +71,28 @@ public class ReservaController {
                         totalFinal = totalFinal.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
                     }
                 } catch (NumberFormatException e) {
-                    // ignorar errores de parseo
+                    // Ignorar errores de parseo
                 }
             }
         }
 
         if (totalBoletos == 0) {
             model.addAttribute("error", "Debes seleccionar al menos un boleto.");
-            model.addAttribute("tiposPrecio", tipoPrecioService.obtenerTiposPorEdad());
+            List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato());
+            model.addAttribute("tiposPrecio", tiposPrecio);
             return "reserva/paso1";
         }
 
         if (totalBoletos > 10) {
             model.addAttribute("error", "No puedes seleccionar más de 10 boletos por transacción.");
-            model.addAttribute("tiposPrecio", tipoPrecioService.obtenerTiposPorEdad());
+            List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(reserva.getFormato());
+            model.addAttribute("tiposPrecio", tiposPrecio);
             return "reserva/paso1";
         }
-
 
         reserva.setBoletosSeleccionados(boletosSeleccionados);
         reserva.setTotal(totalFinal);
 
         return "redirect:/reserva/paso2";
     }
-
-    // Paso 2: aún no implementado, lo veremos después
 }

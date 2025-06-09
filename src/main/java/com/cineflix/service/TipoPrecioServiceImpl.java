@@ -1,11 +1,10 @@
 package com.cineflix.service;
 
+import com.cineflix.entity.TipoPrecio;
+import com.cineflix.repository.TipoPrecioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.cineflix.entity.TipoPrecio;
-import com.cineflix.repository.TipoPrecioRepository;
 
 import java.util.*;
 
@@ -28,7 +27,13 @@ public class TipoPrecioServiceImpl implements TipoPrecioService {
 
         return new ArrayList<>(unicos.values());
     }
-        @Override
+
+    @Override
+    public List<TipoPrecio> obtenerTiposPorEdadYFormato(String formato) {
+        return tipoPrecioRepository.findByFormato(formato);
+    }
+
+    @Override
     public TipoPrecio obtenerPorId(Integer id) {
         return tipoPrecioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipo de precio no encontrado con ID: " + id));
