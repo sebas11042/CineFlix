@@ -79,6 +79,13 @@ public class ReservaController {
             return "reserva/paso1";
         }
 
+        if (totalBoletos > 10) {
+            model.addAttribute("error", "No puedes seleccionar más de 10 boletos por transacción.");
+            model.addAttribute("tiposPrecio", tipoPrecioService.obtenerTiposPorEdad());
+            return "reserva/paso1";
+        }
+
+
         reserva.setBoletosSeleccionados(boletosSeleccionados);
         reserva.setTotal(totalFinal);
 
