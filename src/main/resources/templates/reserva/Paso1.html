@@ -123,5 +123,21 @@
     }
 </script>
 </body>
+<footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
+    <div class="container text-center">
+        <div class="mb-3">
+            <a href="#"><i class="fa fa-facebook mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-twitter mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-instagram mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-youtube-play text-light"></i></a>
+        </div>
+        <p class="mb-0">&copy; <span id="year"></span> CineFlix. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
 
 </html>
