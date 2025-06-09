@@ -30,7 +30,7 @@
             line-height: 30px;
             border-radius: 4px;
             font-size: 14px;
-            background-color: #3f84e5; /* tradicional */
+            background-color: #3f84e5;
             color: white;
             cursor: pointer;
         }
@@ -43,15 +43,6 @@
         .seleccionado {
             background-color: #ffc107;
             color: black;
-        }
-
-        .rampa {
-            background-color: #aaa;
-        }
-
-        .deshabilitado {
-            background-color: red;
-            cursor: not-allowed;
         }
 
         .asientos-grid {
@@ -83,7 +74,6 @@
 
         .leyenda .seleccionado::before { background-color: #ffc107; }
         .leyenda .ocupado::before { background-color: #333; }
-        .leyenda .rampa::before { background-color: #aaa; }
         .leyenda .tradicional::before { background-color: #3f84e5; }
 
         .resumen {
@@ -105,7 +95,6 @@
 </head>
 <body>
 <div class="container py-4">
-    <!-- Pasos -->
     <div class="pasos d-flex justify-content-between mb-4">
         <span>Paso 1<br><strong>Boletos</strong></span>
         <span class="activo">Paso 2<br><strong>Asientos</strong></span>
@@ -120,30 +109,24 @@
 
             <p>Para cambiar tu lugar asignado da clic en el asiento deseado.</p>
 
-            <!-- Leyenda -->
             <div class="leyenda mb-3">
                 <span class="seleccionado">Selección</span>
                 <span class="ocupado">Ocupado</span>
-                <span class="rampa">Silla de ruedas</span>
                 <span class="tradicional">Tradicional</span>
             </div>
 
-            <!-- Grid de asientos -->
             <form method="post" th:action="@{/reserva/paso2}">
                 <div class="asientos-grid">
-                    <div th:each="fila : ${#lists.sort(asientos.?[fila])}">
-                        <div class="fila-asientos" th:each="asiento : ${asientos.?[fila]}">
-                            <div th:class="'asiento ' + 
-                                           (${ocupados.contains(asiento)} ? 'ocupado' : '')"
-                                 th:text="${asiento.columna}"
-                                 th:data-id="${asiento.id_asiento}"
-                                 onclick="toggleSeleccion(this)">
-                            </div>
+                    <div class="fila-asientos" th:each="asiento : ${asientos}">
+                        <div th:class="'asiento ' + (${ocupados.contains(asiento)} ? 'ocupado' : '')"
+                             th:data-id="${asiento.id_asiento}"
+                             th:text="${asiento.fila + asiento.columna}"
+                             onclick="toggleSeleccion(this)">
                         </div>
                     </div>
                 </div>
 
-                <input type="hidden" name="asientos" id="asientosSeleccionados" />
+                <input type="hidden" name="asientos" id="asientosSeleccionados"/>
                 <button type="submit" class="continuar" disabled id="btnContinuar">CONTINUAR</button>
             </form>
         </div>
@@ -152,14 +135,14 @@
         <div class="col-lg-4">
             <div class="resumen">
                 <h4>Resumen de compra</h4>
-                <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster" />
+                <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster"/>
                 <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
                 <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
                 <p><strong>Fecha:</strong> <span th:text="${reserva.fecha}">Fecha</span></p>
                 <p><strong>Función:</strong> <span th:text="${reserva.hora}">Hora</span></p>
-                <p><strong>Boletos:</strong> 
+                <p><strong>Boletos:</strong>
                     <span th:each="entry : ${reserva.boletosSeleccionados}">
-                        <span th:text="${entry.value} + ' × ' + ${entry.key}">1 × adulto</span><br/>
+                        <span th:text="${entry.value + ' boletos'}"></span><br/>
                     </span>
                 </p>
                 <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
@@ -170,7 +153,8 @@
 
 <script>
     const seleccionados = new Set();
-    const maxSeleccion = /*[[${#numbers.sum(reserva.boletosSeleccionados.values())}]]*/ 0;
+    const maxSeleccion = /*[[${totalBoletos}]]*/ 0;
+
 
     function toggleSeleccion(element) {
         if (element.classList.contains('ocupado')) return;
