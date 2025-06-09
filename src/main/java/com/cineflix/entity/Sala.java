@@ -24,4 +24,7 @@ public class Sala {
 
     @Column(nullable = false)
     private int columnas;
+
+    @Column(nullable = false)
+    private int cantidadAsientos;
 }

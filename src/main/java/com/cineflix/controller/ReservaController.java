@@ -106,17 +106,28 @@ public class ReservaController {
     // Paso 2: Mostrar asientos de la sala
     @GetMapping("/paso2")
     public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
+        // Obtener todos los asientos de la sala
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
         asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
 
+        // Obtener los asientos ocupados para la función
         List<Asiento> asientosOcupados = asientoService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
 
         int totalBoletos = reserva.getBoletosSeleccionados()
                                   .values().stream().mapToInt(Integer::intValue).sum();
 
-        model.addAttribute("asientos", asientosSala);
-        model.addAttribute("ocupados", asientosOcupados);
-        model.addAttribute("totalBoletos", totalBoletos); // ✅ clave para paso2.html
+        // Generar lista de letras para las filas
+        List<String> letrasFilas = new java.util.ArrayList<>();
+        for (int i = 0; i < reserva.getSala().getFilas(); i++) {
+            letrasFilas.add(String.valueOf((char) ('A' + i)));
+        }
+        model.addAttribute("letrasFilas", letrasFilas);
+
+        model.addAttribute("asientos", asientosSala); // Todos los asientos de la sala
+        model.addAttribute("ocupados", asientosOcupados); // Asientos ocupados
+        model.addAttribute("totalBoletos", totalBoletos);
+        model.addAttribute("filas", reserva.getSala().getFilas());
+        model.addAttribute("ocupadosIds", asientosOcupados.stream().map(Asiento::getId_asiento).collect(Collectors.toList()));
         return "reserva/paso2";
     }
 
