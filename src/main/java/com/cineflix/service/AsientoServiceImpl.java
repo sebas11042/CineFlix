@@ -28,9 +28,23 @@ public class AsientoServiceImpl implements AsientoService {
     @SuppressWarnings("unchecked")
 
     @Override
-    public List<Asiento> obtenerAsientosOcupados(int idSala) {
-        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosOcupados :idSala", Asiento.class);
-        query.setParameter("idSala", idSala);
+    public List<Asiento> obtenerAsientosOcupados(int idFuncion) {
+        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosOcupadosPorFuncion :idSala", Asiento.class);
+        query.setParameter("idFuncion", idFuncion);
         return query.getResultList();
     }
 }
+
+
+/*  
+ CREATE OR ALTER PROCEDURE ObtenerAsientosOcupadosPorFuncion
+    @idFuncion INT
+AS
+BEGIN
+    SELECT a.id_asiento, a.fila, a.columna, a.tipo
+    FROM AsientoFuncion af
+    JOIN Asiento a ON af.id_asiento = a.id_asiento
+    WHERE af.id_funcion = @idFuncion AND af.ocupado = 1
+    ORDER BY a.fila, a.columna;
+END;
+ */

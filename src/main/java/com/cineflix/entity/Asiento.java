@@ -20,7 +20,7 @@ public class Asiento {
     private Sala sala;
 
     @Column(nullable = false, length = 1)
-    private String fila;
+    private char fila;
 
     @Column(nullable = false)
     private int columna;

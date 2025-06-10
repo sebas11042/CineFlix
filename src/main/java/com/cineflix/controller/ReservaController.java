@@ -10,6 +10,7 @@ import com.cineflix.dto.ReservaDTO;
 import com.cineflix.entity.Asiento;
 import com.cineflix.entity.Funcion;
 import com.cineflix.entity.TipoPrecio;
+import com.cineflix.service.AsientoFuncionService;
 import com.cineflix.service.AsientoService;
 import com.cineflix.service.FuncionService;
 import com.cineflix.service.TipoPrecioService;
@@ -31,9 +32,11 @@ public class ReservaController {
 
     @Autowired
     private TipoPrecioService tipoPrecioService;
-
     @Autowired
     private AsientoService asientoService;
+
+    @Autowired
+    private AsientoFuncionService asientoFuncionService;
 
     // Paso 1: Mostrar formulario de selección de boletos
     @GetMapping("/paso1/{idFuncion}")
@@ -111,12 +114,13 @@ public class ReservaController {
         asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
 
         // Obtener los asientos ocupados para la función
-        List<Asiento> asientosOcupados = asientoService.obtenerAsientosOcupados(reserva.getSala().getIdSala());
+        List<Asiento> asientosOcupados = asientoFuncionService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
+
 
         int totalBoletos = reserva.getBoletosSeleccionados()
                 .values().stream().mapToInt(Integer::intValue).sum();
 
-        // Generar lista de letras para las filas
+        // Generar lista de letras para las filas (como String, no Character)
         List<String> letrasFilas = new java.util.ArrayList<>();
         for (int i = 0; i < reserva.getSala().getFilas(); i++) {
             letrasFilas.add(String.valueOf((char) ('A' + i)));
