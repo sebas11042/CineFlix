@@ -29,7 +29,7 @@ public class AsientoServiceImpl implements AsientoService {
 
     @Override
     public List<Asiento> obtenerAsientosOcupados(int idFuncion) {
-        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosOcupadosPorFuncion :idSala", Asiento.class);
+        Query query = entityManager.createNativeQuery("EXEC ObtenerAsientosOcupadosPorFuncion :idFuncion", Asiento.class);
         query.setParameter("idFuncion", idFuncion);
         return query.getResultList();
     }

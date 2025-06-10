@@ -55,8 +55,8 @@
                             <span class="letra-fila" th:text="${letra}"
                                 style="font-weight: bold; width: 30px; display: inline-block; text-align: right; margin-right: 8px;"></span>
                             <div style="display: flex; gap: 4px;">
-                                <button th:each="asiento : ${asientos}" th:if="${asiento.fila} == ${letra}"
-                                    th:id="'asiento-' + ${asiento.id_asiento}"
+                                <button type="button" th:each="asiento : ${asientos}"
+                                    th:if="${asiento.fila} == ${letra}" th:id="'asiento-' + ${asiento.id_asiento}"
                                     th:classappend="${ocupados.contains(asiento.id_asiento)} ? 'ocupado1' : 'tradicional1'"
                                     th:disabled="${ocupados.contains(asiento.id_asiento)}"
                                     th:attr="data-id=${asiento.id_asiento}" onclick="toggleSeleccion(this)"
@@ -72,9 +72,11 @@
                             </div>
                         </div>
                     </div>
-
                     <input type="hidden" name="asientos" id="asientosSeleccionados" />
-                    <button type="submit" class="continuar" disabled id="btnContinuar">CONTINUAR</button>
+                    <button type="submit" class="continuar" disabled id="btnContinuar"
+                        title="Selecciona todos los asientos requeridos para continuar">CONTINUAR</button>
+                    <p id="btnMessage" style="color: red; font-size: 0.9em; display: none;">Debes seleccionar todos los
+                        asientos requeridos para continuar.</p>
                 </form>
             </div>
 
@@ -98,48 +100,32 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         const seleccionados = new Set();
         const maxSeleccion = /*[[${totalBoletos}]]*/ 0;
 
-
         function toggleSeleccion(element) {
-            if (element.classList.contains('ocupado')) return;
+            if (element.classList.contains('ocupado1')) return;
 
             const id = element.getAttribute('data-id');
 
-            if (element.classList.contains('seleccionado')) {
-                element.classList.remove('seleccionado');
+            if (element.classList.contains('seleccionado1')) {
+                element.classList.remove('seleccionado1');
                 seleccionados.delete(id);
             } else {
                 if (seleccionados.size >= maxSeleccion) return;
-                element.classList.add('seleccionado');
+                element.classList.add('seleccionado1');
                 seleccionados.add(id);
             }
 
             document.getElementById('asientosSeleccionados').value = Array.from(seleccionados).join(',');
-            document.getElementById('btnContinuar').disabled = seleccionados.size !== maxSeleccion;
-        }
-
-        function cambiarEstadoAsiento(idAsiento) {
-            // Aquí puedes hacer un fetch/ajax a un endpoint para cambiar el estado en el backend
-            // y luego actualizar la clase del botón según la respuesta
-            // Ejemplo:
-            fetch('/asiento/cambiarEstado/' + idAsiento, {
-                method: 'POST'
-            })
-                .then(resp => resp.json())
-                .then(data => {
-                    if (data.ocupado) {
-                        document.getElementById('asiento-' + idAsiento).classList.add('ocupado');
-                        document.getElementById('asiento-' + idAsiento).disabled = true;
-                    } else {
-                        document.getElementById('asiento-' + idAsiento).classList.remove('ocupado');
-                        document.getElementById('asiento-' + idAsiento).disabled = false;
-                    }
-                });
+            const btnContinuar = document.getElementById('btnContinuar');
+            const btnMessage = document.getElementById('btnMessage');
+            btnContinuar.disabled = seleccionados.size !== maxSeleccion;
+            btnMessage.style.display = seleccionados.size !== maxSeleccion ? 'block' : 'none';
         }
     </script>
+
 </body>
 <footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
     <div class="container text-center">
