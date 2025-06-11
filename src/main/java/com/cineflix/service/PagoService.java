@@ -2,7 +2,7 @@ package com.cineflix.service;
 
 import com.cineflix.dto.ReservaDTO;
 import com.cineflix.entity.Asiento;
-import com.cineflix.repository.PagoRepository;
+import com.cineflix.repository.PagoProcedureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 public class PagoService {
 
     @Autowired
-    private PagoRepository pagoRepository;
+    private PagoProcedureRepository pagoProcedureRepository;
+
 
     @Autowired
     private PDFGenerator pdfGenerator;
@@ -23,7 +24,7 @@ public class PagoService {
     public void procesarPago(ReservaDTO reserva, String nombre, String apellido, String correo, String metodoPago) {
 
         // Paso 1: Registrar el pago y obtener el ID
-        Integer idPago = pagoRepository.registrarPago(
+        Integer idPago = pagoProcedureRepository.registrarPago(
                 reserva.getTotal(),
                 metodoPago,
                 LocalDateTime.now()
@@ -31,12 +32,12 @@ public class PagoService {
 
         // Paso 2: Generar el CSV de asientos (ej: "5,8,12")
         String asientosCSV = reserva.getAsientosSeleccionados().stream()
-                .map(a -> a.getId_asiento().toString())
+                .map(a -> String.valueOf(a.getId_asiento()))
                 .reduce((a, b) -> a + "," + b)
                 .orElse("");
 
         // Paso 3: Registrar todos los boletos de una vez mediante el procedimiento
-        pagoRepository.registrarBoletos(
+        pagoProcedureRepository.registrarBoletos(
                 reserva.getIdFuncion(),
                 1, // idUsuario temporal (simulado por ahora)
                 idPago,

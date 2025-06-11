@@ -1,7 +1,9 @@
 package com.cineflix.controller;
 
 import com.cineflix.entity.Pago;
+import com.cineflix.repository.PagoProcedureRepository;
 import com.cineflix.repository.PagoRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,8 @@ import java.util.List;
 public class PagoController {
 
     @Autowired
-    private PagoRepository pagoRepository;
+    private PagoRepository pagoRepository; // Este sí tiene findAll y save
+
 
     @GetMapping
     public List<Pago> listarTodos() {
