@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva - Paso 3</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script> <!-- cambiar por tu client ID real -->
+    <style>
+        .paso-activo { color: #ffc107; font-weight: bold; }
+        .form-control { background-color: #232020; color: #fff; }
+        .resumen { background-color: #181818; padding: 20px; border-radius: 10px; color: #fff; }
+        .total { font-size: 1.2em; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body class="bg-dark text-white">
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="/"><img src="/img/logo/LOGO.png" style="height: 60px;" alt="CineFlix Logo"></a>
+    </div>
+
+    <div class="d-flex justify-content-around mb-4">
+        <div>Paso 1<br><span>Boletos</span></div>
+        <div>Paso 2<br><span>Asientos</span></div>
+        <div class="paso-activo">Paso 3<br><span>Pago</span></div>
+    </div>
+
+    <div class="row">
+        <!-- Formulario -->
+        <div class="col-md-7">
+            <h4>Información personal</h4>
+            <form method="post" th:action="@{/reserva/confirmar}" enctype="application/x-www-form-urlencoded">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>* Nombre(s)</label>
+                        <input type="text" class="form-control" name="nombre" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>* Apellidos</label>
+                        <input type="text" class="form-control" name="apellido" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label>* Correo electrónico</label>
+                    <input type="email" class="form-control" name="correo" required>
+                </div>
+
+                <div class="mb-4">
+                    <label>Método de pago</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
+                        <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" name="metodoPago" value="paypal" id="metodoPaypal">
+                        <label class="form-check-label" for="metodoPaypal">Pagar con PayPal</label>
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" required>
+                    <label class="form-check-label">He leído y acepto los términos y condiciones</label>
+                </div>
+
+                <button type="submit" class="btn btn-warning btn-lg w-100">CONFIRMAR PAGO</button>
+            </form>
+        </div>
+
+        <!-- Resumen -->
+        <div class="col-md-5">
+            <div class="resumen">
+                <h4>Resumen de compra</h4>
+                <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
+                <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}"></span></p>
+                <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}"></span></p>
+                <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}"></span></p>
+                <p><strong>Boletos:</strong>
+                    <span th:each="entry : ${reserva.boletosSeleccionados}">
+                        <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
+                    </span>
+                </p>
+                <p><strong>Asientos:</strong> 
+                    <span th:each="a : ${reserva.asientos}">
+                        <span th:text="${a.fila + a.columna} + ' '"></span>
+                    </span>
+                </p>
+                <hr>
+                <p>Cargo por servicio: ₡450 por boleto</p>
+                <p>Subtotal: <span th:text="'₡' + ${reserva.subtotal}"></span></p>
+                <p class="total">Total (IVA incluido): <span th:text="'₡' + ${reserva.total}"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
