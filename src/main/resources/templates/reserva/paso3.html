@@ -4,96 +4,116 @@
     <meta charset="UTF-8">
     <title>Reserva - Paso 3</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/elegant-icons.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/magnific-popup.css">
+    <link rel="stylesheet" href="/css/slicknav.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script> <!-- cambiar por tu client ID real -->
-    <style>
-        .paso-activo { color: #ffc107; font-weight: bold; }
-        .form-control { background-color: #232020; color: #fff; }
-        .resumen { background-color: #181818; padding: 20px; border-radius: 10px; color: #fff; }
-        .total { font-size: 1.2em; font-weight: bold; color: #28a745; }
-    </style>
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
 </head>
-<body class="bg-dark text-white">
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="/"><img src="/img/logo/LOGO.png" style="height: 60px;" alt="CineFlix Logo"></a>
+<header>
+    <div class="container mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/" class="d-flex align-items-center">
+                <img src="/img/logo/LOGO.png" alt="CineFlix Logo" style="height: 80px;">
+            </a>
+        </div>
+        <hr style="border-color: #444;">
     </div>
+</header>
 
-    <div class="d-flex justify-content-around mb-4">
-        <div>Paso 1<br><span>Boletos</span></div>
-        <div>Paso 2<br><span>Asientos</span></div>
-        <div class="paso-activo">Paso 3<br><span>Pago</span></div>
-    </div>
-
-    <div class="row">
-        <!-- Formulario -->
-        <div class="col-md-7">
-            <h4>Información personal</h4>
-            <form method="post" th:action="@{/reserva/confirmar}" enctype="application/x-www-form-urlencoded">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>* Nombre(s)</label>
-                        <input type="text" class="form-control" name="nombre" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>* Apellidos</label>
-                        <input type="text" class="form-control" name="apellido" required>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label>* Correo electrónico</label>
-                    <input type="email" class="form-control" name="correo" required>
-                </div>
-
-                <div class="mb-4">
-                    <label>Método de pago</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
-                        <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="radio" name="metodoPago" value="paypal" id="metodoPaypal">
-                        <label class="form-check-label" for="metodoPaypal">Pagar con PayPal</label>
-                    </div>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" required>
-                    <label class="form-check-label">He leído y acepto los términos y condiciones</label>
-                </div>
-
-                <button type="submit" class="btn btn-warning btn-lg w-100">CONFIRMAR PAGO</button>
-            </form>
+<body class="body-dark text-light">
+    <div class="container py-4">
+        <div class="pasos d-flex justify-content-between mb-4">
+            <span>Paso 1<br><strong>Boletos</strong></span>
+            <span>Paso 2<br><strong>Asientos</strong></span>
+            <span class="activo">Paso 3<br><strong>Pago</strong></span>
         </div>
 
-        <!-- Resumen -->
-        <div class="col-md-5">
-            <div class="resumen">
-                <h4>Resumen de compra</h4>
-                <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
-                <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}"></span></p>
-                <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}"></span></p>
-                <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}"></span></p>
-                <p><strong>Boletos:</strong>
-                    <span th:each="entry : ${reserva.boletosSeleccionados}">
-                        <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
-                    </span>
-                </p>
-                <p><strong>Asientos:</strong> 
-                    <span th:each="a : ${reserva.asientos}">
-                        <span th:text="${a.fila + a.columna} + ' '"></span>
-                    </span>
-                </p>
-                <hr>
-                <p>Cargo por servicio: ₡450 por boleto</p>
-                <p>Subtotal: <span th:text="'₡' + ${reserva.subtotal}"></span></p>
-                <p class="total">Total (IVA incluido): <span th:text="'₡' + ${reserva.total}"></span></p>
+        <div class="row">
+            <!-- Formulario -->
+            <div class="col-lg-7">
+                <h3>Información personal</h3>
+                <form method="post" th:action="@{/reserva/confirmar}" enctype="application/x-www-form-urlencoded">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>* Nombre(s)</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>* Apellidos</label>
+                            <input type="text" class="form-control" name="apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>* Correo electrónico</label>
+                        <input type="email" class="form-control" name="correo" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label>Método de pago</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
+                            <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="radio" name="metodoPago" value="paypal" id="metodoPaypal">
+                            <label class="form-check-label" for="metodoPaypal">Pagar con PayPal</label>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" required>
+                        <label class="form-check-label">He leído y acepto los términos y condiciones</label>
+                    </div>
+
+                    <button type="submit" class="continuar w-100">CONFIRMAR PAGO</button>
+                </form>
+            </div>
+
+            <!-- Resumen -->
+            <div class="col-lg-5">
+                <div class="resumen">
+                    <h4>Resumen de compra</h4>
+                    <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
+                    <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
+                    <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
+                    <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}">Fecha y Hora</span></p>
+                    <p><strong>Boletos:</strong>
+                        <span th:each="entry : ${reserva.boletosSeleccionados}">
+                            <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
+                        </span>
+                    </p>
+                    <p><strong>Asientos:</strong> 
+                        <span th:each="a : ${reserva.asientosSeleccionados}">
+                            <span th:text="${a.fila + '' + a.columna} + ' '"></span>
+                        </span>
+                    </p>
+                    <hr>
+                    <p>Cargo por servicio: ₡450 por boleto</p>
+                    <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 </body>
+
+<footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
+    <div class="container text-center">
+        <div class="mb-3">
+            <a href="#"><i class="fa fa-facebook mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-twitter mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-instagram mr-3 text-light"></i></a>
+            <a href="#"><i class="fa fa-youtube-play text-light"></i></a>
+        </div>
+        <p class="mb-0">&copy; <span id="year"></span> CineFlix. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 </html>

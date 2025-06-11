@@ -1,10 +1,8 @@
 package com.cineflix.controller;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 import com.cineflix.dto.ReservaDTO;
 import com.cineflix.entity.Asiento;
@@ -19,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/reserva")
@@ -32,6 +29,7 @@ public class ReservaController {
 
     @Autowired
     private TipoPrecioService tipoPrecioService;
+
     @Autowired
     private AsientoService asientoService;
 
@@ -42,7 +40,6 @@ public class ReservaController {
     @GetMapping("/paso1/{idFuncion}")
     public String mostrarPaso1(@PathVariable Integer idFuncion, Model model) {
         Funcion funcion = funcionService.obtenerPorId(idFuncion);
-
         List<TipoPrecio> tiposPrecio = tipoPrecioService.obtenerTiposPorEdadYFormato(funcion.getFormato());
 
         ReservaDTO reserva = new ReservaDTO();
@@ -61,8 +58,8 @@ public class ReservaController {
     // Paso 1: Procesar boletos seleccionados
     @PostMapping("/paso1")
     public String procesarPaso1(@RequestParam Map<String, String> params,
-            @ModelAttribute("reserva") ReservaDTO reserva,
-            Model model) {
+                                 @ModelAttribute("reserva") ReservaDTO reserva,
+                                 Model model) {
 
         Map<Integer, Integer> boletosSeleccionados = new HashMap<>();
         int totalBoletos = 0;
@@ -102,51 +99,38 @@ public class ReservaController {
 
         reserva.setBoletosSeleccionados(boletosSeleccionados);
         reserva.setTotal(totalFinal);
-
         return "redirect:/reserva/paso2";
     }
 
     // Paso 2: Mostrar asientos de la sala
     @GetMapping("/paso2")
     public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
-        // Obtener todos los asientos de la sala
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
-        asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(a -> a.getColumna()));
+        asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
 
-        // Obtener los asientos ocupados para la función
-        List<Asiento> asientosOcupados = asientoFuncionService
-                .obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
+        List<Asiento> asientosOcupados = asientoFuncionService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
+        int totalBoletos = reserva.getBoletosSeleccionados().values().stream().mapToInt(Integer::intValue).sum();
 
-        int totalBoletos = reserva.getBoletosSeleccionados()
-                .values().stream().mapToInt(Integer::intValue).sum();
-
-        // Generar lista de letras para las filas (como String, no Character)
-        List<String> letrasFilas = new java.util.ArrayList<>();
+        List<String> letrasFilas = new ArrayList<>();
         for (int i = 0; i < reserva.getSala().getFilas(); i++) {
             letrasFilas.add(String.valueOf((char) ('A' + i)));
         }
+
         model.addAttribute("letrasFilas", letrasFilas);
-
-        model.addAttribute("asientos", asientosSala); // Todos los asientos de la sala
-        model.addAttribute("ocupados", asientosOcupados.stream()
-                .map(Asiento::getId_asiento)
-                .collect(Collectors.toList()));
-
+        model.addAttribute("asientos", asientosSala);
+        model.addAttribute("ocupados", asientosOcupados.stream().map(Asiento::getId_asiento).collect(Collectors.toList()));
         model.addAttribute("totalBoletos", totalBoletos);
-        model.addAttribute("filas", reserva.getSala().getFilas());
-        model.addAttribute("ocupadosIds",
-                asientosOcupados.stream().map(Asiento::getId_asiento).collect(Collectors.toList()));
+
         return "reserva/paso2";
     }
 
     // Paso 2: Procesar selección de asientos
     @PostMapping("/paso2")
     public String procesarPaso2(@RequestParam("asientos") List<Integer> idsAsientosSeleccionados,
-            @ModelAttribute("reserva") ReservaDTO reserva,
-            Model model) {
+                                 @ModelAttribute("reserva") ReservaDTO reserva,
+                                 Model model) {
 
-        int totalBoletos = reserva.getBoletosSeleccionados()
-                .values().stream().mapToInt(Integer::intValue).sum();
+        int totalBoletos = reserva.getBoletosSeleccionados().values().stream().mapToInt(Integer::intValue).sum();
 
         if (idsAsientosSeleccionados.size() != totalBoletos) {
             model.addAttribute("error", "Debes seleccionar exactamente " + totalBoletos + " asientos.");
@@ -160,13 +144,40 @@ public class ReservaController {
             return "reserva/paso2";
         }
 
-        List<Asiento> seleccionados = idsAsientosSeleccionados.stream().map(id -> {
-            Asiento a = new Asiento();
-            a.setId_asiento(id);
-            return a;
-        }).collect(Collectors.toList());
+        List<Asiento> seleccionados = idsAsientosSeleccionados.stream()
+            .map(id -> asientoService.obtenerPorId(id))
+            .collect(Collectors.toList());
 
         reserva.setAsientosSeleccionados(seleccionados);
         return "redirect:/reserva/paso3";
+    }
+
+    // Paso 3: Mostrar formulario de pago
+    @GetMapping("/paso3")
+    public String mostrarPaso3(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
+        if (reserva == null || reserva.getAsientosSeleccionados() == null || reserva.getAsientosSeleccionados().isEmpty()) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("reserva", reserva);
+        return "reserva/paso3";
+    }
+
+    // Paso 3: Procesar confirmación de pago (simulado)
+    @PostMapping("/confirmar")
+    public String confirmarReserva(@ModelAttribute("reserva") ReservaDTO reserva,
+                                   @RequestParam String nombre,
+                                   @RequestParam String apellido,
+                                   @RequestParam String correo,
+                                   @RequestParam String metodoPago,
+                                   RedirectAttributes redirectAttributes,
+                                   Model model) {
+        // Guardar en reserva temporalmente
+        reserva.setMetodoPago(metodoPago);
+        // 🟢 Luego guardaremos nombre, apellido, correo en ReservaDTO si querés
+
+        // Simulación: TODO luego → llamar a PagoService
+        redirectAttributes.addFlashAttribute("exito", "Reserva realizada con éxito.");
+        return "redirect:/";
     }
 }

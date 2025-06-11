@@ -8,4 +8,6 @@ import java.util.List;
 public interface AsientoService {
     List<Asiento> obtenerAsientosPorSala(Sala sala);
     List<Asiento> obtenerAsientosOcupados(int idfuncion);
+    Asiento obtenerPorId(Integer idAsiento);
+
 }

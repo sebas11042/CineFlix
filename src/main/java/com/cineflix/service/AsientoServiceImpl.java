@@ -33,6 +33,10 @@ public class AsientoServiceImpl implements AsientoService {
         query.setParameter("idFuncion", idFuncion);
         return query.getResultList();
     }
+    @Override
+    public Asiento obtenerPorId(Integer idAsiento) {
+    return asientoRepository.findById(idAsiento).orElse(null);
+    }
 }
 
 
