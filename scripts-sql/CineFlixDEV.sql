@@ -442,3 +442,5 @@ SELECT TOP 10 * FROM Boleto ORDER BY id_boleto DESC;
 
 
 SELECT * FROM AsientoFuncion WHERE id_funcion = 5;
+
+SELECT * FROM Usuario;
