@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+  //  @Autowired
+   // private JavaMailSender mailSender;
 
-    public void enviarCorreoConPDF(String destinatario, String asunto, byte[] pdfAdjunto) {
+ /*   public void enviarCorreoConPDF(String destinatario, String asunto, byte[] pdfAdjunto) {
         try {
             MimeMessage mensaje = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
@@ -28,4 +28,5 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+        */
 }

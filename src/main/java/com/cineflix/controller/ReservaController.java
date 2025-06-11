@@ -11,13 +11,16 @@ import com.cineflix.entity.TipoPrecio;
 import com.cineflix.service.AsientoFuncionService;
 import com.cineflix.service.AsientoService;
 import com.cineflix.service.FuncionService;
+import com.cineflix.service.PagoService;
 import com.cineflix.service.TipoPrecioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/reserva")
@@ -35,6 +38,9 @@ public class ReservaController {
 
     @Autowired
     private AsientoFuncionService asientoFuncionService;
+
+    @Autowired
+    private PagoService pagoService;
 
     // Paso 1: Mostrar formulario de selección de boletos
     @GetMapping("/paso1/{idFuncion}")
@@ -80,7 +86,7 @@ public class ReservaController {
                         totalFinal = totalFinal.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
                     }
                 } catch (NumberFormatException e) {
-                    // ignorar errores
+                    // ignorar errores de conversión
                 }
             }
         }
@@ -102,7 +108,7 @@ public class ReservaController {
         return "redirect:/reserva/paso2";
     }
 
-    // Paso 2: Mostrar asientos de la sala
+    // Paso 2: Mostrar formulario de asientos
     @GetMapping("/paso2")
     public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
@@ -127,8 +133,8 @@ public class ReservaController {
     // Paso 2: Procesar selección de asientos
     @PostMapping("/paso2")
     public String procesarPaso2(@RequestParam("asientos") List<Integer> idsAsientosSeleccionados,
-                                 @ModelAttribute("reserva") ReservaDTO reserva,
-                                 Model model) {
+                                @ModelAttribute("reserva") ReservaDTO reserva,
+                                Model model) {
 
         int totalBoletos = reserva.getBoletosSeleccionados().values().stream().mapToInt(Integer::intValue).sum();
 
@@ -145,8 +151,8 @@ public class ReservaController {
         }
 
         List<Asiento> seleccionados = idsAsientosSeleccionados.stream()
-            .map(id -> asientoService.obtenerPorId(id))
-            .collect(Collectors.toList());
+                .map(id -> asientoService.obtenerPorId(id))
+                .collect(Collectors.toList());
 
         reserva.setAsientosSeleccionados(seleccionados);
         return "redirect:/reserva/paso3";
@@ -163,21 +169,35 @@ public class ReservaController {
         return "reserva/paso3";
     }
 
-    // Paso 3: Procesar confirmación de pago (simulado)
+    // Paso 3: Confirmar y generar PDF en línea
     @PostMapping("/confirmar")
-    public String confirmarReserva(@ModelAttribute("reserva") ReservaDTO reserva,
-                                   @RequestParam String nombre,
-                                   @RequestParam String apellido,
-                                   @RequestParam String correo,
-                                   @RequestParam String metodoPago,
-                                   RedirectAttributes redirectAttributes,
-                                   Model model) {
-        // Guardar en reserva temporalmente
-        reserva.setMetodoPago(metodoPago);
-        // 🟢 Luego guardaremos nombre, apellido, correo en ReservaDTO si querés
+    public ResponseEntity<byte[]> confirmarReserva(@ModelAttribute("reserva") ReservaDTO reserva,
+                                                   @RequestParam String nombre,
+                                                   @RequestParam String apellido,
+                                                   @RequestParam String correo,
+                                                   @RequestParam String metodoPago) {
+        try {
+            reserva.setMetodoPago(metodoPago);
 
-        // Simulación: TODO luego → llamar a PagoService
-        redirectAttributes.addFlashAttribute("exito", "Reserva realizada con éxito.");
-        return "redirect:/";
+            // Procesar pago y obtener PDF
+            byte[] pdf = pagoService.procesarPago(reserva, nombre, apellido, correo, metodoPago);
+
+            // Marcar asientos como ocupados
+            String asientosCSV = reserva.getAsientosSeleccionados().stream()
+                    .map(a -> String.valueOf(a.getId_asiento()))
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("");
+            asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
+
+            // Devolver PDF en línea
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=confirmacion_reserva.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

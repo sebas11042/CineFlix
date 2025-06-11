@@ -14,7 +14,7 @@ import java.util.List;
 public class PagoController {
 
     @Autowired
-    private PagoRepository pagoRepository; // Este sí tiene findAll y save
+    private PagoRepository pagoRepository; 
 
 
     @GetMapping

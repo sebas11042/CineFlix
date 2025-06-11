@@ -14,14 +14,11 @@ public class PagoService {
     @Autowired
     private PagoProcedureRepository pagoProcedureRepository;
 
-
     @Autowired
     private PDFGenerator pdfGenerator;
 
-    @Autowired
-    private EmailService emailService;
 
-    public void procesarPago(ReservaDTO reserva, String nombre, String apellido, String correo, String metodoPago) {
+    public byte[] procesarPago(ReservaDTO reserva, String nombre, String apellido, String correo, String metodoPago) {
 
         // Paso 1: Registrar el pago y obtener el ID
         Integer idPago = pagoProcedureRepository.registrarPago(
@@ -36,20 +33,18 @@ public class PagoService {
                 .reduce((a, b) -> a + "," + b)
                 .orElse("");
 
-        // Paso 3: Registrar todos los boletos de una vez mediante el procedimiento
-        pagoProcedureRepository.registrarBoletos(
-                reserva.getIdFuncion(),
-                1, // idUsuario temporal (simulado por ahora)
-                idPago,
-                1, // idTipoPrecio temporal
-                "activo", // estado del boleto
-                asientosCSV
-        );
+// Paso 3: Registrar todos los boletos de una vez mediante el procedimiento
+pagoProcedureRepository.registrarBoletos(
+    reserva.getIdFuncion(),
+    1, // idUsuario temporal (simulado por ahora)
+    idPago,
+    1, // idTipoPrecio temporal
+    "confirmado", // ✅ este valor debe coincidir con los permitidos en la tabla Boleto
+    asientosCSV
+);
 
-        // Paso 4: Generar el PDF
-        byte[] pdf = pdfGenerator.generarPDFReserva(reserva, nombre, apellido, correo, metodoPago);
 
-        // Paso 5: Enviar el PDF al correo del cliente
-        emailService.enviarCorreoConPDF(correo, "Confirmación de reserva CineFlix", pdf);
+        // Paso 4: Generar el PDF y retornarlo
+        return pdfGenerator.generarPDFReserva(reserva, nombre, apellido, correo, metodoPago);
     }
 }
