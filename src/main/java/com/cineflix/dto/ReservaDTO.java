@@ -11,11 +11,13 @@ import com.cineflix.entity.Pelicula;
 import com.cineflix.entity.Sala;
 
 public class ReservaDTO {
+    private Integer idReserva;
     private Integer idFuncion;
     private Pelicula pelicula;
     private Sala sala;
     private LocalDate fecha;
     private LocalTime hora;
+    
 
     private String formato; // ✅ NUEVO: 2D, 3D, etc.
 
@@ -111,4 +113,12 @@ public class ReservaDTO {
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
     }
+        public Integer getIdReserva() {
+        return idReserva;
+    }
+
+    public void setIdReserva(Integer idReserva) {
+        this.idReserva = idReserva;
+    }
+
 }

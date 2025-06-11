@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("/reserva")
@@ -175,7 +176,8 @@ public class ReservaController {
                                                    @RequestParam String nombre,
                                                    @RequestParam String apellido,
                                                    @RequestParam String correo,
-                                                   @RequestParam String metodoPago) {
+                                                   @RequestParam String metodoPago,
+                                                   SessionStatus sessionStatus) {
         try {
             reserva.setMetodoPago(metodoPago);
 
@@ -188,6 +190,9 @@ public class ReservaController {
                     .reduce((a, b) -> a + "," + b)
                     .orElse("");
             asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
+
+            // Invalidar la sesión después de la confirmación
+            sessionStatus.setComplete();
 
             // Devolver PDF en línea
             return ResponseEntity.ok()

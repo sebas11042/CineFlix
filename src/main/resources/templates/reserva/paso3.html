@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <title>Reserva - Paso 3</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/elegant-icons.css">
-    <link rel="stylesheet" href="/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/css/magnific-popup.css">
-    <link rel="stylesheet" href="/css/slicknav.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
+<body class="body-dark text-light">
 <header>
     <div class="container mb-4">
         <div class="d-flex justify-content-between align-items-center">
@@ -24,96 +20,134 @@
     </div>
 </header>
 
-<body class="body-dark text-light">
-    <div class="container py-4">
-        <div class="pasos d-flex justify-content-between mb-4">
-            <span>Paso 1<br><strong>Boletos</strong></span>
-            <span>Paso 2<br><strong>Asientos</strong></span>
-            <span class="activo">Paso 3<br><strong>Pago</strong></span>
-        </div>
+<div class="container py-4">
+    <div class="pasos d-flex justify-content-between mb-4">
+        <span>Paso 1<br><strong>Boletos</strong></span>
+        <span>Paso 2<br><strong>Asientos</strong></span>
+        <span class="activo">Paso 3<br><strong>Pago</strong></span>
+    </div>
 
-        <div class="row">
-            <!-- Formulario -->
-            <div class="col-lg-7">
-                <h3>Información personal</h3>
-                <form th:method="post" th:action="@{/reserva/confirmar}" target="_blank" enctype="application/x-www-form-urlencoded">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>* Nombre(s)</label>
-                            <input type="text" class="form-control" name="nombre" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>* Apellidos</label>
-                            <input type="text" class="form-control" name="apellido" required>
-                        </div>
+    <div class="row">
+        <!-- Formulario -->
+        <div class="col-lg-7">
+            <h3>Información personal</h3>
+            <form id="formConfirmar">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>* Nombre(s)</label>
+                        <input type="text" class="form-control" name="nombre" required>
                     </div>
-
-                    <div class="mb-3">
-                        <label>* Correo electrónico</label>
-                        <input type="email" class="form-control" name="correo" required>
+                    <div class="col-md-6 mb-3">
+                        <label>* Apellidos</label>
+                        <input type="text" class="form-control" name="apellido" required>
                     </div>
-
-                    <div class="mb-4">
-                        <label>Método de pago</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
-                            <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
-                        </div>
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="radio" name="metodoPago" value="paypal" id="metodoPaypal">
-                            <label class="form-check-label" for="metodoPaypal">Pagar con PayPal</label>
-                        </div>
-                    </div>
-
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" required>
-                        <label class="form-check-label">He leído y acepto los términos y condiciones</label>
-                    </div>
-
-                    <button type="submit" class="continuar w-100">CONFIRMAR PAGO</button>
-                </form>
-            </div>
-
-            <!-- Resumen -->
-            <div class="col-lg-5">
-                <div class="resumen">
-                    <h4>Resumen de compra</h4>
-                    <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
-                    <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
-                    <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
-                    <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}">Fecha y Hora</span></p>
-                    <p><strong>Boletos:</strong>
-                        <span th:each="entry : ${reserva.boletosSeleccionados}">
-                            <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
-                        </span>
-                    </p>
-                    <p><strong>Asientos:</strong> 
-                        <span th:each="a : ${reserva.asientosSeleccionados}">
-                            <span th:text="${a.fila + '' + a.columna} + ' '"></span>
-                        </span>
-                    </p>
-                    <hr>
-                    <p>Cargo por servicio: ₡450 por boleto</p>
-                    <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
                 </div>
+
+                <div class="mb-3">
+                    <label>* Correo electrónico</label>
+                    <input type="email" class="form-control" name="correo" required>
+                </div>
+
+                <div class="mb-4">
+                    <label>Método de pago</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
+                        <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" name="metodoPago" value="paypal" id="metodoPaypal">
+                        <label class="form-check-label" for="metodoPaypal">Pagar con PayPal</label>
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" required>
+                    <label class="form-check-label">He leído y acepto los términos y condiciones</label>
+                </div>
+
+                <button type="submit" class="continuar w-100">CONFIRMAR PAGO</button>
+            </form>
+        </div>
+
+        <!-- Resumen -->
+        <div class="col-lg-5">
+            <div class="resumen">
+                <h4>Resumen de compra</h4>
+                <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
+                <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
+                <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
+                <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}">Fecha y Hora</span></p>
+                <p><strong>Boletos:</strong>
+                    <span th:each="entry : ${reserva.boletosSeleccionados}">
+                        <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
+                    </span>
+                </p>
+                <p><strong>Asientos:</strong> 
+                    <span th:each="a : ${reserva.asientosSeleccionados}">
+                        <span th:text="${a.fila + '' + a.columna} + ' '"></span>
+                    </span>
+                </p>
+                <hr>
+                <p>Cargo por servicio: ₡450 por boleto</p>
+                <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
             </div>
         </div>
     </div>
-</body>
+</div>
 
-<footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
-    <div class="container text-center">
-        <div class="mb-3">
-            <a href="#"><i class="fa fa-facebook mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-twitter mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-instagram mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-youtube-play text-light"></i></a>
-        </div>
-        <p class="mb-0">&copy; <span id="year"></span> CineFlix. Todos los derechos reservados.</p>
+<!-- Modal -->
+<div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="modalLabel">🎉 ¡Compra confirmada!</h5>
+      </div>
+      <div class="modal-body text-center">
+        Tu boleto fue generado en PDF en una nueva pestaña. Gracias por usar CineFlix.
+      </div>
+      <div class="modal-footer border-0">
+        <a href="/" class="btn btn-success w-100">CONTINUAR</a>
+      </div>
     </div>
-</footer>
+  </div>
+</div>
 
+<!-- JS Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para manejar el submit con AJAX y abrir el PDF en otra pestaña -->
 <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    document.getElementById("formConfirmar").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData);
+
+        const win = window.open("", "_blank");
+
+        fetch("/reserva/confirmar", {
+            method: "POST",
+            body: params
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error("Error al procesar la reserva");
+            return resp.blob();
+        })
+        .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            win.location.href = blobUrl;
+
+            const modal = new bootstrap.Modal(document.getElementById("modalExito"));
+            modal.show();
+        })
+        .catch(err => {
+            alert("Ocurrió un error al confirmar la reserva.");
+            console.error(err);
+            win.close();
+        });
+    });
 </script>
+
+</body>
 </html>
