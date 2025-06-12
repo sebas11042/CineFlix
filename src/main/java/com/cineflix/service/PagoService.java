@@ -1,7 +1,6 @@
 package com.cineflix.service;
 
 import com.cineflix.dto.ReservaDTO;
-import com.cineflix.entity.Asiento;
 import com.cineflix.repository.PagoProcedureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

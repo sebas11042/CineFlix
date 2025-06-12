@@ -1,7 +1,6 @@
 package com.cineflix.controller;
 
 import com.cineflix.entity.Pago;
-import com.cineflix.repository.PagoProcedureRepository;
 import com.cineflix.repository.PagoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
