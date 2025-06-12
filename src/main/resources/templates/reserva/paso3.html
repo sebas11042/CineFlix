@@ -48,18 +48,56 @@
                         <label>* Correo electrónico</label>
                         <input type="email" class="form-control" name="correo" required>
                     </div>
+
+                    <div class="mb-4">
+                        <label>Método de pago</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta"
+                                id="metodoTarjeta" required>
+                            <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito
+                                (simulado)</label>
+                        </div>
+                    </div>
+                    <!--Tarjeta-->
+                    <div id="tarjeta-formulario" style="display: none; margin-top: 20px;">
+                        <h5>Detalles de la tarjeta</h5>
+                        <div class="mb-3">
+                            <label>Número de tarjeta</label>
+                            <input type="text" class="form-control" name="numeroTarjeta"
+                                placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Fecha de expiración</label>
+                                <input type="text" class="form-control" name="expiracion" placeholder="MM/AA" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>CVV</label>
+                                <input type="text" class="form-control" name="cvv" placeholder="123" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Nombre en la tarjeta</label>
+                            <input type="text" class="form-control" name="nombreTarjeta" required>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        document.getElementById("metodoTarjeta").addEventListener("change", function () {
+                            const tarjetaForm = document.getElementById("tarjeta-formulario");
+                            tarjetaForm.style.display = this.checked ? "block" : "none";
+                        });
+                    </script>
+
+                    <!--Tarjeta-->
+
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" required>
                         <label class="form-check-label">He leído y acepto los términos y condiciones</label>
                     </div>
 
-                    
+                    <button type="submit" class="continuar w-100">CONFIRMAR PAGO</button>
                 </form>
-                  <h5>Total: <strong id="price" th:text=" ${reserva.total}"></strong> </h5>
-                <form id="payment-form">
-                        <button type="submit" class="paypal-button">
-                           <h4>CONFIRMAR PAGO</h4>
-                    </form>
             </div>
 
             <!-- Resumen -->
@@ -83,7 +121,7 @@
                     </p>
                     <hr>
                     <p>Cargo por servicio: ₡450 por boleto</p>
-                    <h5>Total: <strong id="price" th:text="'₡' + ${reserva.total}"></strong> </h5>
+                    <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
                 </div>
             </div>
         </div>
@@ -142,35 +180,6 @@
                 });
         });
     </script>
-
-    <!--Compra-->
-            <script>
-              document.getElementById("payment-form").addEventListener("submit", function (event) {
-                event.preventDefault();
-
-                const amount = document.getElementById("price").textContent.trim();
-
-                fetch("/paypal/pay", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    currency: "USD",
-                    amount: amount,
-                    cancelUrl: "http://localhost:8080/cancel",
-                    successUrl: "http://localhost:8080/paypal/execute"
-                  })
-                })
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.status === "success") {
-                      window.location.href = data.redirect_url;
-                    } else {
-                      alert("Error en el pago: " + data.message);
-                    }
-                  })
-                  .catch(error => console.error("Error:", error));
-              });
-            </script>
 
 </body>
 
