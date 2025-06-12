@@ -444,3 +444,217 @@ SELECT TOP 10 * FROM Boleto ORDER BY id_boleto DESC;
 SELECT * FROM AsientoFuncion WHERE id_funcion = 5;
 
 SELECT * FROM Usuario;
+
+
+
+
+-- *** NUEVOS BLOQUES AGREGADOS DIA 11/6/25 HORA 4:07 p.m ***
+
+--ESTOS BLOQUES SON LOS NECESARIOS PARA CONTROL CONCURRENCIA BLOQUE DE ASIENTOS
+
+-- Esta tabla mantendrá los asientos “bloqueados” temporalmente para evitar que otros usuarios los seleccionen.
+CREATE TABLE ReservaTemporal (
+    id_funcion INT NOT NULL,
+    id_asiento INT NOT NULL,
+    fecha_reserva DATETIME NOT NULL,
+    PRIMARY KEY (id_funcion, id_asiento)
+);
+
+
+
+-- Este procedimiento recibe una lista de asientos y los bloquea solo si no están ya bloqueados
+CREATE OR ALTER PROCEDURE bloquear_asientos_temporalmente
+    @idFuncion INT,
+    @asientos NVARCHAR(MAX) -- '5,6,7'
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @xml XML = CAST('<root><id>' +
+        REPLACE(@asientos, ',', '</id><id>') +
+        '</id></root>' AS XML);
+
+    INSERT INTO ReservaTemporal (id_funcion, id_asiento, fecha_reserva)
+    SELECT
+        @idFuncion,
+        x.value('.', 'INT'),
+        GETDATE()
+    FROM @xml.nodes('/root/id') AS t(x)
+    WHERE NOT EXISTS (
+        SELECT 1 FROM ReservaTemporal
+        WHERE id_funcion = @idFuncion
+          AND id_asiento = x.value('.', 'INT')
+    );
+END;
+
+
+
+-- Este se encarga de limpiar la tabla ReservaTemporal eliminando asientos bloqueados hace más de 5 minutos.
+CREATE OR ALTER PROCEDURE liberar_reservas_expiradas
+AS
+BEGIN
+    DELETE FROM ReservaTemporal
+    WHERE fecha_reserva < DATEADD(MINUTE, -5, GETDATE());
+END;
+
+
+
+-- Consulta general de asientos ocupados para una función:
+SELECT id_asiento FROM AsientoFuncion
+WHERE id_funcion = @idFuncion AND ocupado = 1
+
+UNION
+
+SELECT id_asiento FROM ReservaTemporal
+WHERE id_funcion = @idFuncion;
+
+
+
+-- Permite limpiar los asientos por ejemplo en caso de que el usuario cierre el navegador
+CREATE OR ALTER PROCEDURE liberar_reserva_usuario
+    @idFuncion INT,
+    @asientos NVARCHAR(MAX) -- '5,6,7'
+AS
+BEGIN
+    DECLARE @xml XML = CAST('<root><id>' +
+        REPLACE(@asientos, ',', '</id><id>') +
+        '</id></root>' AS XML);
+
+    DELETE FROM ReservaTemporal
+    WHERE id_funcion = @idFuncion
+      AND id_asiento IN (
+          SELECT x.value('.', 'INT')
+          FROM @xml.nodes('/root/id') AS t(x)
+      );
+END;
+
+
+EXEC bloquear_asientos_temporalmente @idFuncion = 1, @asientos = '5,6,7';
+
+SELECT * FROM ReservaTemporal;
+
+-- *** Aca termina el sql de control de concurrencia con bloqueo temporal de asientos***
+
+
+
+-- PROCEDIMIENTOS PARA REPORTES --
+
+-- Reporte de las ventas por pelicula y fecha
+CREATE OR ALTER PROCEDURE reporte_ventas_por_pelicula_y_fecha
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.titulo AS Pelicula,
+        CONVERT(DATE, pg.fecha_pago) AS Fecha,
+        COUNT(b.id_boleto) AS AsientosVendidos,
+        SUM(tp.precio) AS RecaudadoPorPelicula,
+        (SELECT SUM(p2.monto_total)
+         FROM Pago p2
+         WHERE CONVERT(DATE, p2.fecha_pago) = CONVERT(DATE, pg.fecha_pago)) AS TotalDelDia
+    FROM Boleto b
+    JOIN Funcion f ON b.id_funcion = f.id_funcion
+    JOIN Pelicula p ON f.id_pelicula = p.id_pelicula
+    JOIN TipoPrecio tp ON b.id_tipo_precio = tp.id_tipo_precio
+    JOIN Pago pg ON b.id_pago = pg.id_pago
+    GROUP BY 
+        p.titulo,
+        CONVERT(DATE, pg.fecha_pago)
+    ORDER BY 
+        Fecha DESC,
+        RecaudadoPorPelicula DESC;
+END;
+
+EXEC reporte_ventas_por_pelicula_y_fecha;
+
+
+
+-- ***TRIGGERS***
+
+-- Evita que se registre un pago si el monto_total es menor o igual a 0.
+CREATE OR ALTER TRIGGER trg_no_pago_invalido
+ON Pago
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validar que el monto no sea cero o negativo
+    IF EXISTS (
+        SELECT 1 FROM inserted WHERE monto_total <= 0
+    )
+    BEGIN
+        RAISERROR('❌ No se permite registrar un pago con monto cero o negativo.', 16, 1);
+        RETURN;
+    END
+
+    -- Insertar los pagos válidos
+    INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
+    SELECT monto_total, metodo_pago, fecha_pago
+    FROM inserted;
+END;
+
+-- Habilitar el trigger ya que esta desabilitado
+ENABLE TRIGGER trg_no_pago_invalido ON dbo.Pago;
+
+INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
+VALUES (0, 'paypal', GETDATE());
+
+
+-- ROLES DE USUARIOS Y PERMISOS --
+
+-- Crear roles internos para control de seguridad
+CREATE ROLE AdminApp;
+CREATE ROLE PublicoWeb;
+
+-- Crear usuarios simulados sin login (solo para demostración del esquema)
+CREATE USER admin_user WITHOUT LOGIN;
+CREATE USER web_user WITHOUT LOGIN;
+
+-- Asignarlos a los roles
+ALTER ROLE AdminApp ADD MEMBER admin_user;
+ALTER ROLE PublicoWeb ADD MEMBER web_user;
+
+-- Permisos para el administrador (AdminApp)
+GRANT SELECT, INSERT, UPDATE, DELETE ON Pelicula TO AdminApp;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Funcion TO AdminApp;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TipoPrecio TO AdminApp;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Sala TO AdminApp;
+GRANT EXECUTE ON reporte_ventas_por_pelicula_y_fecha TO AdminApp;
+
+-- Permisos para el usuario público (PublicoWeb)
+GRANT SELECT ON Pelicula TO PublicoWeb;
+GRANT SELECT ON Funcion TO PublicoWeb;
+GRANT SELECT ON Sala TO PublicoWeb;
+GRANT SELECT ON TipoPrecio TO PublicoWeb;
+GRANT EXECUTE ON registrar_pago TO PublicoWeb;
+GRANT EXECUTE ON registrar_boletos TO PublicoWeb;
+GRANT EXECUTE ON ocupar_asientos_funcion TO PublicoWeb;
+
+
+
+
+-- ***ÍNDICES RECOMENDADOS PARA CONSULTAS COMUNES***
+
+CREATE INDEX idx_funcion_id_pelicula ON Funcion(id_pelicula);
+CREATE INDEX idx_boleto_funcion_asiento ON Boleto(id_funcion, id_asiento);
+CREATE INDEX idx_funcion_fecha ON Funcion(fecha);
+CREATE INDEX idx_tipoprecio_formato ON TipoPrecio(formato);
+CREATE INDEX idx_asientofuncion_funcion_ocupado ON AsientoFuncion(id_funcion, ocupado);
+CREATE INDEX idx_pago_fecha_pago ON Pago(fecha_pago);
+CREATE UNIQUE INDEX idx_usuario_correo ON Usuario(correo);
+
+
+-- DETERMINAR QUE DATOS ALMACENADOS DEBEN ESTAR ENCRIPTADOS
+
+/*Se identificaron los siguientes campos como sensibles y deben ser encriptados o protegidos:
+
+Usuario.correo: Información personal del usuario.
+
+Usuario.contrasena_hash: Aunque ya está cifrada con hash, debe almacenarse con algoritmos seguros como bcrypt o SHA-512.
+
+Pago.metodo_pago: Aunque actualmente almacena texto como 'paypal' o 'tarjeta', si se llegara a guardar información de tarjetas o tokens de pago, debe ser cifrada.
+
+La protección de estos datos es fundamental para asegurar la privacidad del usuario y cumplir con prácticas de seguridad estándar.*/
+
