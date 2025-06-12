@@ -2137,3 +2137,8 @@ button.continuar {
   /* Verde o el color que prefieras */
   color: white;
 }
+
+.paypal-logo {
+  height: 60px;
+  width: auto;
+}

@@ -2,7 +2,6 @@ package com.cineflix.controller;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +13,7 @@ import com.cineflix.entity.Pelicula;
 import com.cineflix.service.FuncionService;
 import com.cineflix.service.PeliculaService;
 
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class PeliculaViewController {
@@ -32,17 +32,32 @@ public class PeliculaViewController {
         return "index";
     }
 
-@GetMapping("/pelicula/{id}")
-public String verPeliculas(@PathVariable int id, Model model) {
-    Pelicula pelicula = peliculaService.findById(id);
-    if (pelicula != null) {
-        model.addAttribute("pelicula", pelicula);
-        List<FuncionViewDTO> funciones = funcionService.obtenerFuncionesPorPelicula(id);
-        model.addAttribute("funciones", funciones); // 👈 sin Map
-        return "DetallePelicula";
+    @GetMapping("/pelicula/{id}")
+    public String verPeliculas(@PathVariable int id, Model model) {
+        Pelicula pelicula = peliculaService.findById(id);
+        if (pelicula != null) {
+            model.addAttribute("pelicula", pelicula);
+            List<FuncionViewDTO> funciones = funcionService.obtenerFuncionesPorPelicula(id);
+            model.addAttribute("funciones", funciones); // 👈 sin Map
+            return "DetallePelicula";
+        }
+        return "error/404";
     }
-    return "error/404";
-}
 
+    @GetMapping("/success")
+    public String success() {
+        return "success";
+    }
+
+    @GetMapping("/cancel")
+    public String cancel() {
+        return "cancel";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
 
 }
