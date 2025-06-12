@@ -12,6 +12,7 @@ import com.cineflix.service.AsientoFuncionService;
 import com.cineflix.service.AsientoService;
 import com.cineflix.service.FuncionService;
 import com.cineflix.service.PagoService;
+import com.cineflix.service.ReservaTemporalService;
 import com.cineflix.service.TipoPrecioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class ReservaController {
 
     @Autowired
     private AsientoFuncionService asientoFuncionService;
+
+    @Autowired
+    private ReservaTemporalService reservaTemporalService;
 
     @Autowired
     private PagoService pagoService;
@@ -112,6 +116,10 @@ public class ReservaController {
     // Paso 2: Mostrar formulario de asientos
     @GetMapping("/paso2")
     public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
+
+        // ✅ Limpiar asientos expirados antes de mostrar
+        reservaTemporalService.liberarAsientosExpirados();
+
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
         asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
 
@@ -156,6 +164,14 @@ public class ReservaController {
                 .collect(Collectors.toList());
 
         reserva.setAsientosSeleccionados(seleccionados);
+
+        // ✅ Bloqueo temporal en BD
+        String asientosCSV = seleccionados.stream()
+                .map(a -> String.valueOf(a.getId_asiento()))
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
+        reservaTemporalService.bloquearAsientosTemporal(reserva.getIdFuncion(), asientosCSV);
+
         return "redirect:/reserva/paso3";
     }
 

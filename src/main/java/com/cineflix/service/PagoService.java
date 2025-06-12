@@ -26,7 +26,14 @@ public class PagoService {
                 LocalDateTime.now()
         );
 
-        // ✅ Asignar ese ID como idReserva al DTO
+        // Validación por seguridad
+        if (idPago == null) {
+            throw new RuntimeException("❌ No se pudo registrar el pago. Verificá el monto o el trigger.");
+        }
+
+        System.out.println("✅ idPago generado correctamente: " + idPago);
+
+        // Asignar ese ID como idReserva al DTO
         reserva.setIdReserva(idPago);
 
         // Paso 2: Generar el CSV de asientos (ej: "5,8,12")
@@ -35,17 +42,21 @@ public class PagoService {
                 .reduce((a, b) -> a + "," + b)
                 .orElse("");
 
-        // Paso 3: Registrar todos los boletos de una vez mediante el procedimiento
+        if (asientosCSV.isEmpty()) {
+            throw new RuntimeException("❌ No se seleccionaron asientos para registrar.");
+        }
+
+        // Paso 3: Registrar los boletos
         pagoProcedureRepository.registrarBoletos(
             reserva.getIdFuncion(),
-            1, // idUsuario temporal (simulado por ahora)
+            1, // idUsuario simulado
             idPago,
-            1, // idTipoPrecio temporal (esto se puede mejorar después)
-            "confirmado", // ✅ debe coincidir con los valores válidos en la tabla Boleto
+            1, // TODO: Reemplazar con el ID real de TipoPrecio
+            "confirmado",
             asientosCSV
         );
 
-        // Paso 4: Generar el PDF con el QR y retornarlo
+        // Paso 4: Generar y retornar PDF
         return pdfGenerator.generarPDFReserva(reserva, nombre, apellido, correo, metodoPago);
     }
 }
