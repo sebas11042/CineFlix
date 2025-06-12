@@ -23,7 +23,7 @@ public class ReservaTemporalService {
 
     @Transactional
     public void liberarAsientosExpirados() {
-        Query query = entityManager.createNativeQuery("EXEC liberar_asientos_expirados");
+        Query query = entityManager.createNativeQuery("EXEC liberar_reservas_expiradas");
         query.executeUpdate();
     }
 }

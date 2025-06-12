@@ -207,10 +207,13 @@ public class ReservaController {
                     .orElse("");
             asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
 
-            // Invalidar la sesión después de la confirmación
+            // ✅ Liberar asientos bloqueados temporalmente tras confirmar
+            reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
+
+            // Finalizar sesión
             sessionStatus.setComplete();
 
-            // Devolver PDF en línea
+            // PDF de confirmación en línea
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=confirmacion_reserva.pdf")
                     .contentType(MediaType.APPLICATION_PDF)

@@ -427,42 +427,8 @@ BEGIN
 END;
 
 
---pdf
-CREATE OR ALTER PROCEDURE [dbo].[ocupar_asientos_funcion]
-    @idFuncion INT,
-    @asientos NVARCHAR(MAX) -- Ej: '12,13,14'
-AS
-BEGIN
-    SET NOCOUNT ON;
 
-    DECLARE @xml XML = CAST('<root><id>' +
-        REPLACE(@asientos, ',', '</id><id>') +
-        '</id></root>' AS XML);
 
-    -- Insertar si no existe
-    INSERT INTO AsientoFuncion (id_funcion, id_asiento, ocupado)
-    SELECT
-        @idFuncion,
-        x.value('.', 'INT'),
-        1
-    FROM @xml.nodes('/root/id') AS t(x)
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM AsientoFuncion af
-        WHERE af.id_funcion = @idFuncion
-          AND af.id_asiento = x.value('.', 'INT')
-    );
-
-    -- Por si ya existían y estaban en false, asegurarse de marcarlos ocupados
-    UPDATE af
-    SET af.ocupado = 1
-    FROM AsientoFuncion af
-    INNER JOIN (
-        SELECT x.value('.', 'INT') AS id_asiento
-        FROM @xml.nodes('/root/id') AS t(x)
-    ) parsed ON af.id_asiento = parsed.id_asiento
-    WHERE af.id_funcion = @idFuncion;
-END;
 
 
 SELECT name, is_disabled
@@ -614,14 +580,23 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Validar que el monto no sea cero o negativo
+    -- Validación de monto inválido
     IF EXISTS (
-        SELECT 1 FROM inserted WHERE monto_total <= 0
+        SELECT 1
+        FROM inserted
+        WHERE monto_total IS NULL OR monto_total <= 0
     )
     BEGIN
-        RAISERROR('❌ No se permite registrar un pago con monto cero o negativo.', 16, 1);
+        RAISERROR('❌ No se permite registrar un pago con monto cero, negativo o nulo.', 16, 1);
         RETURN;
     END
+
+    -- Si el monto es válido, hacer el insert real
+    INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
+    SELECT monto_total, metodo_pago, fecha_pago
+    FROM inserted;
+END;
+
 
     -- Insertar los pagos válidos
     INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
@@ -691,4 +666,60 @@ Usuario.contrasena_hash: Aunque ya está cifrada con hash, debe almacenarse con 
 Pago.metodo_pago: Aunque actualmente almacena texto como 'paypal' o 'tarjeta', si se llegara a guardar información de tarjetas o tokens de pago, debe ser cifrada.
 
 La protección de estos datos es fundamental para asegurar la privacidad del usuario y cumplir con prácticas de seguridad estándar.*/
+
+
+SELECT TOP 10 * FROM Pago ORDER BY id_pago DESC;
+
+
+
+EXEC registrar_pago 0, 'paypal', GETDATE();
+
+
+EXEC registrar_pago 4950, 'tarjeta', GETDATE()
+
+EXEC sp_helptext registrar_pago;
+
+DECLARE @monto_total DECIMAL(10,2) = 0;
+DECLARE @metodo_pago NVARCHAR(50) = 'tarjeta';
+DECLARE @fecha_pago DATETIME = GETDATE();
+
+EXEC registrar_pago @monto_total = @monto_total, @metodo_pago = @metodo_pago, @fecha_pago = @fecha_pago;
+
+
+SELECT TOP 1 * FROM Pago ORDER BY id_pago DESC;
+
+SELECT * FROM Pago WHERE id_pago = 0;
+
+
+--REGISTRAR PAGO NUEVO
+DROP TRIGGER IF EXISTS trg_no_pago_invalido;
+
+CREATE OR ALTER PROCEDURE registrar_pago  
+    @monto_total DECIMAL(10,2),  
+    @metodo_pago NVARCHAR(50),  
+    @fecha_pago DATETIME  
+AS  
+BEGIN  
+    SET NOCOUNT ON;
+
+    -- ✅ Validar el monto directamente
+    IF @monto_total <= 0
+    BEGIN
+        RAISERROR('❌ No se permite registrar un pago con monto cero o negativo.', 16, 1);
+        RETURN;
+    END
+
+    -- Crear tabla temporal para recibir el OUTPUT  
+    DECLARE @output TABLE (id_pago INT);  
+
+    -- Insertar en Pago y capturar el ID insertado  
+    INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)  
+    OUTPUT INSERTED.id_pago INTO @output(id_pago)  
+    VALUES (@monto_total, @metodo_pago, @fecha_pago);  
+
+    -- Devolver el ID insertado  
+    SELECT id_pago FROM @output;  
+END;
+
+
 
