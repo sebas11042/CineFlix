@@ -29,25 +29,13 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes("reserva")
 public class ReservaController {
 
-    @Autowired
-    private FuncionService funcionService;
+    @Autowired private FuncionService funcionService;
+    @Autowired private TipoPrecioService tipoPrecioService;
+    @Autowired private AsientoService asientoService;
+    @Autowired private AsientoFuncionService asientoFuncionService;
+    @Autowired private ReservaTemporalService reservaTemporalService;
+    @Autowired private PagoService pagoService;
 
-    @Autowired
-    private TipoPrecioService tipoPrecioService;
-
-    @Autowired
-    private AsientoService asientoService;
-
-    @Autowired
-    private AsientoFuncionService asientoFuncionService;
-
-    @Autowired
-    private ReservaTemporalService reservaTemporalService;
-
-    @Autowired
-    private PagoService pagoService;
-
-    // Paso 1: Mostrar formulario de selección de boletos
     @GetMapping("/paso1/{idFuncion}")
     public String mostrarPaso1(@PathVariable Integer idFuncion, Model model) {
         Funcion funcion = funcionService.obtenerPorId(idFuncion);
@@ -66,7 +54,6 @@ public class ReservaController {
         return "reserva/paso1";
     }
 
-    // Paso 1: Procesar boletos seleccionados
     @PostMapping("/paso1")
     public String procesarPaso1(@RequestParam Map<String, String> params,
                                  @ModelAttribute("reserva") ReservaDTO reserva,
@@ -91,7 +78,7 @@ public class ReservaController {
                         totalFinal = totalFinal.add(precioUnitario.multiply(BigDecimal.valueOf(cantidad)));
                     }
                 } catch (NumberFormatException e) {
-                    // ignorar errores de conversión
+                    // ignorar
                 }
             }
         }
@@ -113,17 +100,20 @@ public class ReservaController {
         return "redirect:/reserva/paso2";
     }
 
-    // Paso 2: Mostrar formulario de asientos
     @GetMapping("/paso2")
     public String mostrarPaso2(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
+        if (reserva == null || reserva.getBoletosSeleccionados() == null || reserva.getBoletosSeleccionados().isEmpty()) {
+            return "redirect:/";
+        }
 
-        // ✅ Limpiar asientos expirados antes de mostrar
         reservaTemporalService.liberarAsientosExpirados();
 
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
         asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
 
         List<Asiento> asientosOcupados = asientoFuncionService.obtenerAsientosOcupadosPorFuncion(reserva.getIdFuncion());
+        List<Integer> asientosBloqueados = reservaTemporalService.obtenerIdsAsientosBloqueadosTemporalmente(reserva.getIdFuncion());
+
         int totalBoletos = reserva.getBoletosSeleccionados().values().stream().mapToInt(Integer::intValue).sum();
 
         List<String> letrasFilas = new ArrayList<>();
@@ -134,16 +124,19 @@ public class ReservaController {
         model.addAttribute("letrasFilas", letrasFilas);
         model.addAttribute("asientos", asientosSala);
         model.addAttribute("ocupados", asientosOcupados.stream().map(Asiento::getId_asiento).collect(Collectors.toList()));
+        model.addAttribute("bloqueados", asientosBloqueados);
         model.addAttribute("totalBoletos", totalBoletos);
 
         return "reserva/paso2";
     }
 
-    // Paso 2: Procesar selección de asientos
     @PostMapping("/paso2")
     public String procesarPaso2(@RequestParam("asientos") List<Integer> idsAsientosSeleccionados,
                                 @ModelAttribute("reserva") ReservaDTO reserva,
                                 Model model) {
+        if (reserva == null || reserva.getBoletosSeleccionados() == null) {
+            return "redirect:/";
+        }
 
         int totalBoletos = reserva.getBoletosSeleccionados().values().stream().mapToInt(Integer::intValue).sum();
 
@@ -165,7 +158,6 @@ public class ReservaController {
 
         reserva.setAsientosSeleccionados(seleccionados);
 
-        // ✅ Bloqueo temporal en BD
         String asientosCSV = seleccionados.stream()
                 .map(a -> String.valueOf(a.getId_asiento()))
                 .reduce((a, b) -> a + "," + b)
@@ -175,7 +167,6 @@ public class ReservaController {
         return "redirect:/reserva/paso3";
     }
 
-    // Paso 3: Mostrar formulario de pago
     @GetMapping("/paso3")
     public String mostrarPaso3(@ModelAttribute("reserva") ReservaDTO reserva, Model model) {
         if (reserva == null || reserva.getAsientosSeleccionados() == null || reserva.getAsientosSeleccionados().isEmpty()) {
@@ -186,40 +177,44 @@ public class ReservaController {
         return "reserva/paso3";
     }
 
-    // Paso 3: Confirmar y generar PDF en línea
     @PostMapping("/confirmar")
-    public ResponseEntity<byte[]> confirmarReserva(@ModelAttribute("reserva") ReservaDTO reserva,
-                                                   @RequestParam String nombre,
-                                                   @RequestParam String apellido,
-                                                   @RequestParam String correo,
-                                                   @RequestParam String metodoPago,
-                                                   SessionStatus sessionStatus) {
+    public ResponseEntity<byte[]> confirmarReserva(
+            @SessionAttribute(value = "reserva", required = false) ReservaDTO reserva,
+            @RequestParam String nombre,
+            @RequestParam String apellido,
+            @RequestParam String correo,
+            @RequestParam String metodoPago,
+            SessionStatus sessionStatus) {
+
+        System.out.println("👉 Entrando a confirmarReserva...");
+
+        if (reserva == null) {
+            System.err.println("❌ Error: reserva es null (posible sesión expirada)");
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             reserva.setMetodoPago(metodoPago);
 
-            // Procesar pago y obtener PDF
             byte[] pdf = pagoService.procesarPago(reserva, nombre, apellido, correo, metodoPago);
 
-            // Marcar asientos como ocupados
             String asientosCSV = reserva.getAsientosSeleccionados().stream()
                     .map(a -> String.valueOf(a.getId_asiento()))
                     .reduce((a, b) -> a + "," + b)
                     .orElse("");
             asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
 
-            // ✅ Liberar asientos bloqueados temporalmente tras confirmar
             reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
 
-            // Finalizar sesión
             sessionStatus.setComplete();
 
-            // PDF de confirmación en línea
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=confirmacion_reserva.pdf")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(pdf);
 
         } catch (Exception e) {
+            System.err.println("⛔ Error en confirmarReserva:");
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }

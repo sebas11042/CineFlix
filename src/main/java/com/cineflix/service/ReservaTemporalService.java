@@ -1,5 +1,7 @@
 package com.cineflix.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +17,7 @@ public class ReservaTemporalService {
 
     @Transactional
     public void bloquearAsientosTemporal(Integer idFuncion, String asientosCSV) {
-        Query query = entityManager.createNativeQuery("EXEC bloquear_asientos_temporal ?, ?");
+        Query query = entityManager.createNativeQuery("EXEC bloquear_asientos_temporalmente ?, ?");
         query.setParameter(1, idFuncion);
         query.setParameter(2, asientosCSV);
         query.executeUpdate();
@@ -26,4 +28,20 @@ public class ReservaTemporalService {
         Query query = entityManager.createNativeQuery("EXEC liberar_reservas_expiradas");
         query.executeUpdate();
     }
+
+    @Transactional
+    public void liberarAsientosReservados(Integer idFuncion, String asientosCSV) {
+        Query query = entityManager.createNativeQuery("EXEC liberar_reserva_usuario ?, ?");
+        query.setParameter(1, idFuncion);
+        query.setParameter(2, asientosCSV);
+        query.executeUpdate();
+    }
+
+    public List<Integer> obtenerIdsAsientosBloqueadosTemporalmente(Integer idFuncion) {
+    Query query = entityManager.createNativeQuery("EXEC obtener_asientos_temporalmente_bloqueados :idFuncion");
+    query.setParameter("idFuncion", idFuncion);
+    return query.getResultList();
+}
+
+
 }
