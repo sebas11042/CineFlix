@@ -173,6 +173,8 @@ public class ReservaController {
             return "redirect:/";
         }
 
+        reservaTemporalService.liberarAsientosExpirados();
+
         model.addAttribute("reserva", reserva);
         return "reserva/paso3";
     }
@@ -188,8 +190,8 @@ public class ReservaController {
 
         System.out.println("👉 Entrando a confirmarReserva...");
 
-        if (reserva == null) {
-            System.err.println("❌ Error: reserva es null (posible sesión expirada)");
+        if (reserva == null || reserva.getAsientosSeleccionados() == null || reserva.getAsientosSeleccionados().isEmpty()) {
+            System.err.println("❌ Error: reserva inválida o sin asientos");
             return ResponseEntity.badRequest().build();
         }
 
@@ -202,8 +204,8 @@ public class ReservaController {
                     .map(a -> String.valueOf(a.getId_asiento()))
                     .reduce((a, b) -> a + "," + b)
                     .orElse("");
-            asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
 
+            asientoFuncionService.ocuparAsientos(reserva.getIdFuncion(), asientosCSV);
             reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
 
             sessionStatus.setComplete();
@@ -219,4 +221,24 @@ public class ReservaController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/cancelar")
+public ResponseEntity<Void> cancelarReserva(
+        @SessionAttribute(value = "reserva", required = false) ReservaDTO reserva,
+        SessionStatus sessionStatus) {
+
+    if (reserva != null && reserva.getAsientosSeleccionados() != null && !reserva.getAsientosSeleccionados().isEmpty()) {
+        String asientosCSV = reserva.getAsientosSeleccionados().stream()
+                .map(a -> String.valueOf(a.getId_asiento()))
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
+
+        reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
+    }
+
+    sessionStatus.setComplete(); // Limpia la sesión
+    return ResponseEntity.ok().build();
+}
+
+
 }
