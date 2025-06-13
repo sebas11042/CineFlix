@@ -137,13 +137,13 @@
                         </ul>
                         <div class="portfolio__item__text text-center">
                             
-                              <div class="btn-group-acciones">
-                                    <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
+                               <div class="btn-group-acciones">
+                                    <a th:href="@{/admin/edit/{id}(id=${pelicula.idPelicula})}"
                                         class="btn-accion btn-editar">Editar
                                         <i class="fa fa-pencil"></i>
                                     </a>
 
-                                    <form th:action="@{'/admin/eliminarPelicula/' + ${pelicula.idPelicula}}"
+                                   <form th:action="@{/admin/eliminarPelicula/{id}(id=${pelicula.idPelicula})}"
                                         method="post"
                                         onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
                                         style="display: inline;">
@@ -177,19 +177,21 @@
                         </ul>
 
                         <div class="portfolio__item__text text-center">
-                            <div class="btn-group-acciones">
-                                <a th:href="@{'/admin/editarPelicula/' + ${pelicula.idPelicula}}"
-                                    class="btn-accion btn-editar">Editar
-                                    <i class="fa fa-pencil"></i>
-                                </a>
 
-                                <form th:action="@{'/admin/eliminarPelicula/' + ${pelicula.idPelicula}}" method="post"
-                                    onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
-                                    style="display: inline;">
-                                    <button type="submit" class="btn-accion btn-eliminar">
-                                        <i class="fa fa-trash"></i>
-                                        Eliminar
-                                    </button>
+                            <div class="btn-group-acciones">
+                                    <a th:href="@{/admin/edit/{id}(id=${pelicula.idPelicula})}"
+                                        class="btn-accion btn-editar">Editar
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+
+                               <form th:action="@{/admin/eliminarPelicula/{id}(id=${pelicula.idPelicula})}"
+                                        method="post"
+                                        onsubmit="return confirm('¿Estás seguro que deseas eliminar esta película?')"
+                                        style="display: inline;">
+                                        <button type="submit" class="btn-accion btn-eliminar">
+                                            <i class="fa fa-trash"></i>
+                                            Eliminar
+                                        </button>
                                 </form>
                             </div>
                         </div>

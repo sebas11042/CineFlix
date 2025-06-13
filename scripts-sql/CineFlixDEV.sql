@@ -571,7 +571,7 @@ EXEC reporte_ventas_por_pelicula_y_fecha;
 
 
 
--- ***TRIGGERS***
+-- **TRIGGERS**
 
 -- Evita que se registre un pago si el monto_total es menor o igual a 0.
 CREATE OR ALTER TRIGGER trg_no_pago_invalido
@@ -644,7 +644,7 @@ GRANT EXECUTE ON ocupar_asientos_funcion TO PublicoWeb;
 
 
 
--- ***ÍNDICES RECOMENDADOS PARA CONSULTAS COMUNES***
+-- **ÍNDICES RECOMENDADOS PARA CONSULTAS COMUNES**
 
 CREATE INDEX idx_funcion_id_pelicula ON Funcion(id_pelicula);
 CREATE INDEX idx_boleto_funcion_asiento ON Boleto(id_funcion, id_asiento);
