@@ -99,16 +99,13 @@
             <div class="col-lg-4">
                 <div class="resumen">
                     <h4>Resumen de compra</h4>
+                    <br>
                     <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster" />
                     <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
                     <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
                     <p><strong>Fecha:</strong> <span th:text="${reserva.fecha}">Fecha</span></p>
                     <p><strong>Función:</strong> <span th:text="${reserva.hora}">Hora</span></p>
-                    <p><strong>Boletos:</strong>
-                        <span th:each="entry : ${reserva.boletosSeleccionados}">
-                            <span th:text="${entry.value + ' boletos'}"></span><br />
-                        </span>
-                    </p>
+
                     <h5>Total: <span th:text="'₡' + ${reserva.total}">₡0000</span></h5>
                 </div>
             </div>

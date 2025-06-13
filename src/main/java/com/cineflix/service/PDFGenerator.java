@@ -39,7 +39,7 @@ public class PDFGenerator {
                 logo.setAlignment(Image.LEFT);
                 documento.add(logo);
             } catch (Exception e) {
-                System.out.println("⚠️ No se pudo cargar el logo de CineFlix.");
+                System.out.println("⚠️ No se pudo cargar el logo de CineFix.");
             }
 
             // Título
@@ -47,7 +47,7 @@ public class PDFGenerator {
             titulo.setAlignment(Element.ALIGN_CENTER);
             documento.add(titulo);
 
-            documento.add(new Paragraph("CineFlix", new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL)));
+            documento.add(new Paragraph("CineFix", new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL)));
             documento.add(Chunk.NEWLINE);
 
             // Datos cliente
