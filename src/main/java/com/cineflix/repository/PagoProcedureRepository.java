@@ -20,13 +20,15 @@ public class PagoProcedureRepository {
         query.setParameter(2, metodoPago);
         query.setParameter(3, fechaPago);
 
-        Object result = query.getSingleResult();  // Recibe el SELECT id_pago
-        if (result instanceof Object[]) {
-            return (Integer) ((Object[]) result)[0];
+        Object result = query.getSingleResult();
+
+        if (result instanceof Number) {
+            return ((Number) result).intValue();
         } else {
-            return (Integer) result;
+            return null;
         }
     }
+
 
     @Transactional
     public void registrarBoletos(

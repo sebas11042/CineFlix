@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
@@ -12,19 +13,27 @@
     <link rel="stylesheet" href="/css/magnific-popup.css">
     <link rel="stylesheet" href="/css/slicknav.min.css">
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .bloqueado1 {
+            background-color: #ff6666 !important;
+            color: white;
+        }
+    </style>
 </head>
-<header>
-    <div class="container mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <a href="/" class="d-flex align-items-center">
-                <img src="/img/logo/LOGO.png" alt="CineFlix Logo" style="height: 80px;">
-            </a>
-        </div>
-        <hr style="border-color: #444;">
-    </div>
-</header>
+
 
 <body>
+    <header>
+        <div class="container mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="/" class="d-flex align-items-center">
+                    <img src="/img/logo/LOGO.png" alt="CineFlix Logo" style="height: 80px;">
+                </a>
+            </div>
+            <hr style="border-color: #444;">
+        </div>
+    </header>
+
     <div class="container py-4">
         <div class="pasos d-flex justify-content-between mb-4">
             <span>Paso 1<br><strong>Boletos</strong></span>
@@ -37,6 +46,12 @@
             <div class="col-lg-8">
                 <h3>Selecciona tus asientos</h3>
                 <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                <!-- ⏱️ Temporizador -->
+                <div class="mb-3 alert alert-warning" style="font-size: 16px; font-weight: bold;">
+                    <i class="fa fa-clock-o"></i> Tiempo restante para confirmar tu selección: 
+                    <span id="temporizador">5:00</span>
+                </div>
 
                 <p>Para cambiar tu lugar asignado da clic en el asiento deseado.</p>
 
@@ -57,16 +72,16 @@
                             <div style="display: flex; gap: 4px;">
                                 <button type="button" th:each="asiento : ${asientos}"
                                     th:if="${asiento.fila} == ${letra}" th:id="'asiento-' + ${asiento.id_asiento}"
-                                    th:classappend="${ocupados.contains(asiento.id_asiento)} ? 'ocupado1' : 'tradicional1'"
-                                    th:disabled="${ocupados.contains(asiento.id_asiento)}"
+                                    th:classappend="${ocupados.contains(asiento.id_asiento)} ? 'ocupado1' : 
+                                                    (${bloqueados.contains(asiento.id_asiento)} ? 'bloqueado1' : 'tradicional1')"
+                                    th:disabled="${ocupados.contains(asiento.id_asiento) || bloqueados.contains(asiento.id_asiento)}"
                                     th:attr="data-id=${asiento.id_asiento}" onclick="toggleSeleccion(this)"
                                     style="margin: 0; position: relative;">
-                                    <span th:if="${ocupados.contains(asiento.id_asiento)}"
+                                    <span th:if="${ocupados.contains(asiento.id_asiento) || bloqueados.contains(asiento.id_asiento)}"
                                         style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                                        <span
-                                            style="color: #e53935; font-weight: bold; font-size: 15px; line-height: 1;">[[${asiento.columna}]]</span>
+                                        <span th:text="${asiento.columna}" style="color: white; font-weight: bold; font-size: 15px; line-height: 1;"></span>
                                     </span>
-                                    <span th:unless="${ocupados.contains(asiento.id_asiento)}"
+                                    <span th:unless="${ocupados.contains(asiento.id_asiento) || bloqueados.contains(asiento.id_asiento)}"
                                         th:text="${asiento.columna}"></span>
                                 </button>
                             </div>
@@ -100,12 +115,13 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script th:inline="javascript">
         const seleccionados = new Set();
         const maxSeleccion = /*[[${totalBoletos}]]*/ 0;
 
         function toggleSeleccion(element) {
-            if (element.classList.contains('ocupado1')) return;
+            if (element.classList.contains('ocupado1') || element.classList.contains('bloqueado1')) return;
 
             const id = element.getAttribute('data-id');
 
@@ -124,19 +140,35 @@
             btnContinuar.disabled = seleccionados.size !== maxSeleccion;
             btnMessage.style.display = seleccionados.size !== maxSeleccion ? 'block' : 'none';
         }
+
+        let tiempo = 300;
+        function actualizarTemporizador() {
+            const minutos = Math.floor(tiempo / 60);
+            const segundos = tiempo % 60;
+            document.getElementById("temporizador").textContent = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+            tiempo--;
+
+            if (tiempo < 0) {
+                clearInterval(intervalo);
+                alert("⏰ El tiempo para seleccionar tus asientos ha expirado. Serás redirigido al inicio.");
+                window.location.href = "/";
+            }
+        }
+
+        const intervalo = setInterval(actualizarTemporizador, 1000);
+        window.onload = actualizarTemporizador;
     </script>
 
-</body>
-<footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
-    <div class="container text-center">
-        <div class="mb-3">
-            <a href="#"><i class="fa fa-facebook mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-twitter mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-instagram mr-3 text-light"></i></a>
-            <a href="#"><i class="fa fa-youtube-play text-light"></i></a>
+    <footer class="mt-5 py-4" style="background-color: #111; color: #ccc;">
+        <div class="container text-center">
+            <div class="mb-3">
+                <a href="#"><i class="fa fa-facebook mr-3 text-light"></i></a>
+                <a href="#"><i class="fa fa-twitter mr-3 text-light"></i></a>
+                <a href="#"><i class="fa fa-instagram mr-3 text-light"></i></a>
+                <a href="#"><i class="fa fa-youtube-play text-light"></i></a>
+            </div>
+            <p class="mb-0">&copy; <span id="year"></span> CineFlix. Todos los derechos reservados.</p>
         </div>
-        <p class="mb-0">&copy; <span id="year"></span> CineFlix. Todos los derechos reservados.</p>
-    </div>
-</footer>
-
+    </footer>
+</body>
 </html>

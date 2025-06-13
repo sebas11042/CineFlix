@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Reserva - Paso 3</title>
@@ -52,19 +51,17 @@
                     <div class="mb-4">
                         <label>Método de pago</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta"
-                                id="metodoTarjeta" required>
-                            <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito
-                                (simulado)</label>
+                            <input class="form-check-input" type="radio" name="metodoPago" value="tarjeta" id="metodoTarjeta" required>
+                            <label class="form-check-label" for="metodoTarjeta">Tarjeta crédito / débito (simulado)</label>
                         </div>
                     </div>
+
                     <!--Tarjeta-->
                     <div id="tarjeta-formulario" style="display: none; margin-top: 20px;">
                         <h5>Detalles de la tarjeta</h5>
                         <div class="mb-3">
                             <label>Número de tarjeta</label>
-                            <input type="text" class="form-control" name="numeroTarjeta"
-                                placeholder="1234 5678 9012 3456" required>
+                            <input type="text" class="form-control" name="numeroTarjeta" placeholder="1234 5678 9012 3456" required>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -81,22 +78,10 @@
                             <input type="text" class="form-control" name="nombreTarjeta" required>
                         </div>
                     </div>
-                    
-                    <script>
-                        document.getElementById("metodoTarjeta").addEventListener("change", function () {
-                            const tarjetaForm = document.getElementById("tarjeta-formulario");
-                            tarjetaForm.style.display = this.checked ? "block" : "none";
-                        });
-                    </script>
 
-                    <!--Tarjeta-->
-
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" required>
-                        <label class="form-check-label">He leído y acepto los términos y condiciones</label>
-                    </div>
-
+                    <!-- Botones -->
                     <button type="submit" class="continuar w-100">CONFIRMAR PAGO</button>
+                    <button type="button" class="btn btn-danger w-100 mt-2" id="cancelarReservaBtn">CANCELAR RESERVA</button>
                 </form>
             </div>
 
@@ -107,8 +92,7 @@
                     <img th:src="${reserva.pelicula.imagenUrl}" class="img-fluid mb-2" alt="poster">
                     <p><strong>Película:</strong> <span th:text="${reserva.pelicula.titulo}">Título</span></p>
                     <p><strong>Complejo:</strong> <span th:text="${reserva.sala.nombre}">Sala</span></p>
-                    <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}">Fecha y
-                            Hora</span></p>
+                    <p><strong>Función:</strong> <span th:text="${reserva.fecha} + ' - ' + ${reserva.hora}">Fecha y Hora</span></p>
                     <p><strong>Boletos:</strong>
                         <span th:each="entry : ${reserva.boletosSeleccionados}">
                             <span th:text="${entry.value + ' x ' + entry.key}"></span><br />
@@ -127,7 +111,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal de éxito -->
     <div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content bg-dark text-light">
@@ -147,8 +131,13 @@
     <!-- JS Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script para manejar el submit con AJAX y abrir el PDF en otra pestaña -->
+    <!-- Script mostrar tarjeta -->
     <script>
+        document.getElementById("metodoTarjeta").addEventListener("change", function () {
+            const tarjetaForm = document.getElementById("tarjeta-formulario");
+            tarjetaForm.style.display = this.checked ? "block" : "none";
+        });
+
         document.getElementById("formConfirmar").addEventListener("submit", function (e) {
             e.preventDefault();
 
@@ -179,8 +168,18 @@
                     win.close();
                 });
         });
+
+        document.getElementById("cancelarReservaBtn").addEventListener("click", function () {
+            fetch("/reserva/cancelar", {
+                method: "POST"
+            }).then(() => {
+                window.location.href = "/";
+            }).catch(err => {
+                alert("Error al cancelar la reserva");
+                console.error(err);
+            });
+        });
     </script>
 
 </body>
-
 </html>
