@@ -51,7 +51,7 @@
                             <ul>
                                 <li class="active"><a href="/">Inicio</a></li>
                                 <li><a href="/admin/nuevaPelicula">NUEVA PELICULA</a></li>
-                                <li><a href="#" onclick="mostrarReporteVentas()">REPORTES</a></li>
+                                <li><a href="#" onclick="mostrarReporteVentas()">REPORTE</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -74,26 +74,34 @@
     <br><br><br>
     <!-- Hero Section End -->
 
+
+    <style>
+    #reporteVentas td {
+        color: #ffffff;
+        background-color: transparent;
+    }
+
+
+    </style>
+
     <!-- Reporte Ventas (oculto por defecto) -->
     <div class="container" id="reporteVentas" style="display: none;">
         <h2 class="portfolio-title">Reporte de Ventas por Película y Fecha</h2>
+        <a href="/api/reportes/ventas/pdf" class="btn btn-danger mb-3" target="_blank">
+            <i class="fa fa-file-pdf-o"></i> Descargar PDF
+        </a>
         <div class="table-responsive">
             <table class="table table-bordered mt-3 table-striped table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Película</th>
-                        <th>Fecha</th>
-                        <th>Asientos Vendidos</th>
-                        <th>Recaudado</th>
-                        <th>Total del Día</th>
-                    </tr>
-                </thead>
                 <tbody id="tablaReporteVentas">
+
+
+
                     <!-- Contenido cargado dinámicamente -->
                 </tbody>
             </table>
         </div>
     </div>
+
 
     <!-- Portfolio Section Begin -->
     <section class="team spad set-bg" data-setbg="img/team-bg.jpg">
@@ -192,41 +200,85 @@
 
     <!-- Scripts -->
     <script src="/js/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.set-bg').each(function () {
-                const bg = $(this).attr('data-setbg');
-                $(this).css('background-image', 'url(' + bg + ')');
-            });
+   <script>
+    $(document).ready(function () {
+        $('.set-bg').each(function () {
+            const bg = $(this).attr('data-setbg');
+            $(this).css('background-image', 'url(' + bg + ')');
         });
+    });
 
-        function mostrarReporteVentas() {
-            document.getElementById("reporteVentas").style.display = "block";
+     function mostrarReporteVentas() {
+        document.getElementById("reporteVentas").style.display = "block";
 
-            fetch('/api/reportes/ventas')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById("tablaReporteVentas");
-                    tbody.innerHTML = "";
+        fetch('/api/reportes/ventas')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById("tablaReporteVentas");
+                tbody.innerHTML = "";
 
-                    data.forEach(item => {
-                        const fila = `
+                const gruposPorFecha = {};
+
+                // Agrupar los datos por fecha
+                data.forEach(item => {
+                    if (!gruposPorFecha[item.fecha]) {
+                        gruposPorFecha[item.fecha] = [];
+                    }
+                    gruposPorFecha[item.fecha].push(item);
+                });
+
+                // Recorrer grupos y construir filas
+                Object.keys(gruposPorFecha).sort().reverse().forEach(fecha => {
+                    const registros = gruposPorFecha[fecha];
+                    let subtotalAsientos = 0;
+                    let subtotalRecaudado = 0;
+
+                    // Fila separadora de fecha
+                    tbody.innerHTML += `
+                        <tr>
+                            <td colspan="4" style="background-color:#343a40; color:white; font-weight:bold; text-align:center; padding:10px;">
+                                Fecha: ${fecha}
+                            </td>
+                        </tr>
+                        <tr style="background-color: transparent; color: white; font-weight: bold;">
+                            <td> Película</td>
+                            <td> Asientos Vendidos</td>
+                            <td> Recaudado</td>
+                        </tr>
+
+                    `;
+
+                    registros.forEach((item, index) => {
+                        subtotalAsientos += item.asientosVendidos;
+                        subtotalRecaudado += item.recaudadoPorPelicula;
+
+                        tbody.innerHTML += `
                             <tr>
                                 <td>${item.pelicula}</td>
-                                <td>${item.fecha}</td>
                                 <td>${item.asientosVendidos}</td>
                                 <td>₡${item.recaudadoPorPelicula}</td>
-                                <td>₡${item.totalDelDia}</td>
+                                
                             </tr>
                         `;
-                        tbody.innerHTML += fila;
                     });
-                })
-                .catch(error => {
-                    console.error("Error al obtener el reporte:", error);
+
+                    // Fila total del día
+                    tbody.innerHTML += `
+                        <tr style="font-weight:bold; background-color: #1d1d1d; color: #fff;">
+                            <td>Total del Día</td>
+                            <td>${subtotalAsientos}</td>
+                            <td>₡${subtotalRecaudado}</td>
+                         
+                        </tr>
+                    `;
                 });
-        }
-    </script>
+            })
+            .catch(error => {
+                console.error("Error al obtener el reporte:", error);
+            });
+    }
+</script>
+
 
     <!-- Footer -->
     <footer class="footer">
