@@ -571,7 +571,7 @@ EXEC reporte_ventas_por_pelicula_y_fecha;
 
 
 
--- **TRIGGERS**
+-- ***TRIGGERS***
 
 -- Evita que se registre un pago si el monto_total es menor o igual a 0.
 CREATE OR ALTER TRIGGER trg_no_pago_invalido
@@ -611,6 +611,35 @@ INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
 VALUES (0, 'paypal', GETDATE());
 
 
+-- TRIGGER PARA AUDITORIA DE BOLETOS
+--Todos los eventos quedan registrados en la tabla AuditoriaBoleto, permitiendo trazabilidad del sistema.
+CREATE OR ALTER TRIGGER trg_auditoria_boleto
+ON Boleto
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @accion NVARCHAR(10);
+
+    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+        SET @accion = 'UPDATE';
+    ELSE IF EXISTS (SELECT * FROM inserted)
+        SET @accion = 'INSERT';
+    ELSE IF EXISTS (SELECT * FROM deleted)
+        SET @accion = 'DELETE';
+
+    INSERT INTO AuditoriaBoleto (id_boleto, accion, fecha_evento)
+    SELECT 
+        COALESCE(i.id_boleto, d.id_boleto),
+        @accion,
+        GETDATE()
+    FROM inserted i
+    FULL OUTER JOIN deleted d ON i.id_boleto = d.id_boleto;
+END;
+
+
+
 -- ROLES DE USUARIOS Y PERMISOS --
 
 -- Crear roles internos para control de seguridad
@@ -644,7 +673,7 @@ GRANT EXECUTE ON ocupar_asientos_funcion TO PublicoWeb;
 
 
 
--- **ÍNDICES RECOMENDADOS PARA CONSULTAS COMUNES**
+-- ***ÍNDICES RECOMENDADOS PARA CONSULTAS COMUNES***
 
 CREATE INDEX idx_funcion_id_pelicula ON Funcion(id_pelicula);
 CREATE INDEX idx_boleto_funcion_asiento ON Boleto(id_funcion, id_asiento);
@@ -743,3 +772,24 @@ BEGIN
     WHERE id_funcion = @idFuncion
       AND DATEADD(MINUTE, 5, fecha_reserva) > GETDATE(); -- aún dentro de los 5 minutos
 END;
+
+
+
+
+-- UPDATES E INSERSIONES DE PELICULAS
+
+UPDATE Pelicula SET fecha_salida = '2025-04-25' WHERE id_pelicula = 13;
+
+SELECT * FROM Pelicula;
+
+USE CineFlix;
+GO
+
+INSERT INTO Funcion (id_pelicula, id_sala, fecha, hora, formato, idioma)
+VALUES 
+(3, 1, '2025-06-13', '18:00:00', '2D', 'doblada'),
+(3, 1, '2025-06-13', '21:00:00', '3D', 'subtitulada'),
+(3, 2, '2025-06-14', '19:30:00', '2D', 'original');
+
+
+SELECT * FROM Funcion WHERE id_pelicula = 9;

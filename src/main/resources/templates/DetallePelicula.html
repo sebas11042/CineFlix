@@ -85,7 +85,7 @@
             <div th:if="${funciones != null and !funciones.isEmpty()}">
                 <div th:each="funcion : ${funciones}" class="mb-3 p-3 bg-dark text-white rounded shadow-sm">
                     <div>
-                        <p class="fw-bold mb-1" th:text="'Sala ' + ${funcion.sala} + ' | ' + ${funcion.formato} + ' | ' + ${funcion.idioma}">Sala</p>
+                        <p class="fw-bold mb-1" th:text="'' + ${funcion.sala} + ' | ' + ${funcion.formato} + ' | ' + ${funcion.idioma}"></p>
                         <p class="mb-2">
                             <i class="fa fa-calendar text-secondary"></i>
                             <span th:text="${funcion.fecha}">Fecha</span>
