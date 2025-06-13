@@ -128,8 +128,8 @@
     <!-- JS Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script mostrar tarjeta -->
-    <script>
+    <!-- Scripts funcionales -->
+    <script th:inline="javascript">
         document.getElementById("metodoTarjeta").addEventListener("change", function () {
             const tarjetaForm = document.getElementById("tarjeta-formulario");
             tarjetaForm.style.display = this.checked ? "block" : "none";
@@ -141,29 +141,28 @@
             const form = e.target;
             const formData = new FormData(form);
             const params = new URLSearchParams(formData);
-
             const win = window.open("", "_blank");
 
             fetch("/reserva/confirmar", {
                 method: "POST",
                 body: params
             })
-                .then(resp => {
-                    if (!resp.ok) throw new Error("Error al procesar la reserva");
-                    return resp.blob();
-                })
-                .then(blob => {
-                    const blobUrl = URL.createObjectURL(blob);
-                    win.location.href = blobUrl;
+            .then(resp => {
+                if (!resp.ok) throw new Error("Error al procesar la reserva");
+                return resp.blob();
+            })
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(blob);
+                win.location.href = blobUrl;
 
-                    const modal = new bootstrap.Modal(document.getElementById("modalExito"));
-                    modal.show();
-                })
-                .catch(err => {
-                    alert("Ocurrió un error al confirmar la reserva.");
-                    console.error(err);
-                    win.close();
-                });
+                const modal = new bootstrap.Modal(document.getElementById("modalExito"));
+                modal.show();
+            })
+            .catch(err => {
+                alert("Ocurrió un error al confirmar la reserva.");
+                console.error(err);
+                win.close();
+            });
         });
 
         document.getElementById("cancelarReservaBtn").addEventListener("click", function () {
@@ -176,7 +175,20 @@
                 console.error(err);
             });
         });
-    </script>
+
+
+    window.addEventListener("beforeunload", function () {
+        const idFuncion = /*[[${reserva.idFuncion}]]*/ 0;
+        const asientos = /*[[${#strings.listJoin(reserva.asientosSeleccionados.![id_asiento], ',')}]]*/ '';
+
+        if (idFuncion > 0 && asientos.length > 0) {
+            navigator.sendBeacon("/reserva/liberar-temporal", new URLSearchParams({
+                idFuncion: idFuncion,
+                asientos: asientos
+            }));
+        }
+    });
+</script>
 
 </body>
 </html>

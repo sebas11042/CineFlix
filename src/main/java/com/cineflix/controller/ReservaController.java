@@ -106,7 +106,7 @@ public class ReservaController {
             return "redirect:/";
         }
 
-        reservaTemporalService.liberarAsientosExpirados();
+        reservaTemporalService.liberarAsientosExpirados(); // 🔧 Limpieza automática
 
         List<Asiento> asientosSala = asientoService.obtenerAsientosPorSala(reserva.getSala());
         asientosSala.sort(Comparator.comparing(Asiento::getFila).thenComparing(Asiento::getColumna));
@@ -173,7 +173,7 @@ public class ReservaController {
             return "redirect:/";
         }
 
-        reservaTemporalService.liberarAsientosExpirados();
+        reservaTemporalService.liberarAsientosExpirados(); // 🔧 Limpieza automática
 
         model.addAttribute("reserva", reserva);
         return "reserva/paso3";
@@ -223,22 +223,30 @@ public class ReservaController {
     }
 
     @PostMapping("/cancelar")
-public ResponseEntity<Void> cancelarReserva(
-        @SessionAttribute(value = "reserva", required = false) ReservaDTO reserva,
-        SessionStatus sessionStatus) {
+    public ResponseEntity<Void> cancelarReserva(
+            @SessionAttribute(value = "reserva", required = false) ReservaDTO reserva,
+            SessionStatus sessionStatus) {
 
-    if (reserva != null && reserva.getAsientosSeleccionados() != null && !reserva.getAsientosSeleccionados().isEmpty()) {
-        String asientosCSV = reserva.getAsientosSeleccionados().stream()
-                .map(a -> String.valueOf(a.getId_asiento()))
-                .reduce((a, b) -> a + "," + b)
-                .orElse("");
+        if (reserva != null && reserva.getAsientosSeleccionados() != null && !reserva.getAsientosSeleccionados().isEmpty()) {
+            String asientosCSV = reserva.getAsientosSeleccionados().stream()
+                    .map(a -> String.valueOf(a.getId_asiento()))
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("");
 
-        reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
+            reservaTemporalService.liberarAsientosReservados(reserva.getIdFuncion(), asientosCSV);
+        }
+
+        sessionStatus.setComplete();
+        return ResponseEntity.ok().build();
     }
 
-    sessionStatus.setComplete(); // Limpia la sesión
-    return ResponseEntity.ok().build();
-}
+    @PostMapping("/liberar-temporal")
+        public ResponseEntity<Void> liberarAsientosTemporalDesdeFrontend(
+                @RequestParam("idFuncion") Integer idFuncion,
+                @RequestParam("asientos") String asientosCSV) {
 
+            reservaTemporalService.liberarAsientosReservados(idFuncion, asientosCSV);
+            return ResponseEntity.ok().build();
+        }
 
 }

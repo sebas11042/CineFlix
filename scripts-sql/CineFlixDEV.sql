@@ -574,41 +574,12 @@ EXEC reporte_ventas_por_pelicula_y_fecha;
 -- ***TRIGGERS***
 
 -- Evita que se registre un pago si el monto_total es menor o igual a 0.
-CREATE OR ALTER TRIGGER trg_no_pago_invalido
-ON Pago
-INSTEAD OF INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Validación de monto inválido
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE monto_total IS NULL OR monto_total <= 0
-    )
-    BEGIN
-        RAISERROR('❌ No se permite registrar un pago con monto cero, negativo o nulo.', 16, 1);
-        RETURN;
-    END
-
-    -- Si el monto es válido, hacer el insert real
-    INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
-    SELECT monto_total, metodo_pago, fecha_pago
-    FROM inserted;
-END;
 
 
-    -- Insertar los pagos válidos
-    INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
-    SELECT monto_total, metodo_pago, fecha_pago
-    FROM inserted;
-END;
 
--- Habilitar el trigger ya que esta desabilitado
+   
 
-INSERT INTO Pago (monto_total, metodo_pago, fecha_pago)
-VALUES (0, 'paypal', GETDATE());
+
 
 
 -- TRIGGER PARA AUDITORIA DE BOLETOS
@@ -622,6 +593,7 @@ BEGIN
 
     DECLARE @accion NVARCHAR(10);
 
+    -- Determinar la acción realizada
     IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
         SET @accion = 'UPDATE';
     ELSE IF EXISTS (SELECT * FROM inserted)
@@ -629,6 +601,7 @@ BEGIN
     ELSE IF EXISTS (SELECT * FROM deleted)
         SET @accion = 'DELETE';
 
+    -- Registrar en tabla de auditoría
     INSERT INTO AuditoriaBoleto (id_boleto, accion, fecha_evento)
     SELECT 
         COALESCE(i.id_boleto, d.id_boleto),
@@ -637,6 +610,44 @@ BEGIN
     FROM inserted i
     FULL OUTER JOIN deleted d ON i.id_boleto = d.id_boleto;
 END;
+
+INSERT INTO Boleto (id_funcion, id_asiento, id_usuario, id_tipo_precio, id_pago, estado)
+VALUES (1, 5, 2, 1, 1, 'confirmado'); -- valor válido
+
+
+UPDATE Boleto SET estado = 'cancelado' WHERE id_boleto = 1; --también válido
+
+DELETE FROM Boleto WHERE id_boleto = 1; -- activará el trigger también
+
+
+-- Ver auditoría
+SELECT * FROM AuditoriaBoleto;
+
+
+-- Tabla creada para el trigger trg_log_cancelacion_reserva
+CREATE TABLE LogCancelaciones (
+    id_log INT IDENTITY(1,1) PRIMARY KEY,
+    id_funcion INT,
+    id_asiento INT,
+    fecha_cancelacion DATETIME
+);
+
+--Este trigger audita toda eliminación de asientos reservados temporalmente (cancelaciones o expiración).
+CREATE OR ALTER TRIGGER trg_log_cancelacion_reserva
+ON ReservaTemporal
+AFTER DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO LogCancelaciones (id_funcion, id_asiento, fecha_cancelacion)
+    SELECT id_funcion, id_asiento, GETDATE()
+    FROM deleted;
+END;
+
+
+
+
 
 
 
@@ -720,9 +731,6 @@ SELECT * FROM Pago WHERE id_pago = 0;
 
 
 --REGISTRAR PAGO NUEVO
-DROP TRIGGER IF EXISTS trg_no_pago_invalido;
-
-
 -- PROCEDIMIENTO LARGO
 CREATE OR ALTER PROCEDURE registrar_pago  
     @monto_total DECIMAL(10,2),  
@@ -732,14 +740,14 @@ AS
 BEGIN  
     SET NOCOUNT ON;
 
-    -- ✅ Validar el monto directamente
+    -- Validar el monto directamente
     IF @monto_total <= 0
     BEGIN
-        RAISERROR('❌ No se permite registrar un pago con monto cero o negativo.', 16, 1);
+        RAISERROR('No se permite registrar un pago con monto cero o negativo.', 16, 1);
         RETURN;
     END
 
-    -- Crear tabla temporal para recibir el OUTPUT  
+     
     DECLARE @output TABLE (id_pago INT);  
 
     -- Insertar en Pago y capturar el ID insertado  
@@ -750,6 +758,11 @@ BEGIN
     -- Devolver el ID insertado  
     SELECT id_pago FROM @output;  
 END;
+
+
+
+
+
 
 
 SELECT TOP 10 * FROM Pago ORDER BY id_pago DESC;
@@ -787,9 +800,9 @@ GO
 
 INSERT INTO Funcion (id_pelicula, id_sala, fecha, hora, formato, idioma)
 VALUES 
-(3, 1, '2025-06-13', '18:00:00', '2D', 'doblada'),
-(3, 1, '2025-06-13', '21:00:00', '3D', 'subtitulada'),
-(3, 2, '2025-06-14', '19:30:00', '2D', 'original');
+(9, 1, '2025-06-13', '18:00:00', '2D', 'doblada'),
+(9, 1, '2025-06-13', '21:00:00', '3D', 'subtitulada'),
+(9, 2, '2025-06-14', '19:30:00', '2D', 'original');
 
 
-SELECT * FROM Funcion WHERE id_pelicula = 9;
+SELECT * FROM Funcion WHERE id_pelicula = 3;
