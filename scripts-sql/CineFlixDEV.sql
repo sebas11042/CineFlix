@@ -800,9 +800,9 @@ GO
 
 INSERT INTO Funcion (id_pelicula, id_sala, fecha, hora, formato, idioma)
 VALUES 
-(9, 1, '2025-06-13', '18:00:00', '2D', 'doblada'),
-(9, 1, '2025-06-13', '21:00:00', '3D', 'subtitulada'),
-(9, 2, '2025-06-14', '19:30:00', '2D', 'original');
+(7, 1, '2025-06-13', '18:00:00', '2D', 'doblada'),
+(7, 1, '2025-06-13', '21:00:00', '3D', 'subtitulada'),
+(7, 2, '2025-06-14', '19:30:00', '2D', 'original');
 
 
 SELECT * FROM Funcion WHERE id_pelicula = 3;
