@@ -367,26 +367,34 @@ CREATE OR ALTER PROCEDURE registrar_boletos
     @idPago INT,
     @idTipoPrecio INT,
     @estado NVARCHAR(50),
-    @asientos NVARCHAR(MAX) -- formato: '5,6,7'
+    @asientos NVARCHAR(MAX)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Convertir la lista de IDs a tabla temporal usando XML
-    DECLARE @xml XML = CAST('<root><id>' + 
-        REPLACE(@asientos, ',', '</id><id>') + 
-        '</id></root>' AS XML);
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    -- Insertar boletos por cada id_asiento
-    INSERT INTO Boleto (id_funcion, id_asiento, id_usuario, id_tipo_precio, id_pago, estado)
-    SELECT 
-        @idFuncion,
-        x.value('.', 'INT') AS id_asiento,
-        @idUsuario,
-        @idTipoPrecio,
-        @idPago,
-        @estado
-    FROM @xml.nodes('/root/id') AS t(x);
+        DECLARE @xml XML = CAST('<root><id>' + 
+            REPLACE(@asientos, ',', '</id><id>') + 
+            '</id></root>' AS XML);
+
+        INSERT INTO Boleto (id_funcion, id_asiento, id_usuario, id_tipo_precio, id_pago, estado)
+        SELECT 
+            @idFuncion,
+            x.value('.', 'INT'),
+            @idUsuario,
+            @idTipoPrecio,
+            @idPago,
+            @estado
+        FROM @xml.nodes('/root/id') AS t(x);
+
+        COMMIT;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
 END;
 
 

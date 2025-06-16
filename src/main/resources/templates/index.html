@@ -18,6 +18,13 @@
     <link rel="stylesheet" href="css/magnific-popup.css">
     <link rel="stylesheet" href="css/slicknav.min.css">
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Scroll suave -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 
 <body>
@@ -44,6 +51,9 @@
                         <nav class="header__nav__menu mobile-menu">
                             <ul>
                                 <li class="active"><a href="/">Inicio</a></li>
+                                <li><a href="#estrenos">Estrenos</a></li>
+                                <li><a href="#cartelera">Cartelera</a></li>
+                                <li><a href="#proximamente">Próximamente</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -67,7 +77,7 @@
     <!-- Hero End -->
 
     <!-- Estrenos Begin -->
-    <section class="team spad set-bg" data-setbg="img/team-bg.jpg">
+    <section id="estrenos" class="team spad set-bg" data-setbg="img/team-bg.jpg">
         <h2 class="portfolio-title">ESTRENOS</h2>
         <div class="container">
             <div class="row portfolio__gallery">
@@ -93,7 +103,7 @@
     <!-- Estrenos End -->
 
     <!-- Cartelera Begin -->
-    <section class="portfolio nuevo">
+    <section id="cartelera" class="portfolio nuevo">
         <h2 class="portfolio-title">CARTELERA</h2>
         <div class="row portfolio__gallery">
             <div class="col-lg-4 col-md-6 col-sm-6 mix" th:each="pelicula : ${peliculasOtras}">
@@ -114,7 +124,7 @@
     <!-- Cartelera End -->
 
     <!-- Próximamente Begin -->
-    <section class="preventa-wrapper">
+    <section id="proximamente" class="preventa-wrapper">
         <div class="preventa-section">
             <h2 class="preventa-title">Próximamente</h2>
             <div class="pelicula-slider">
@@ -134,11 +144,11 @@
     </section>
     <!-- Próximamente End -->
 
-    <!-- JS Plugins (orden correcto con jQuery CDN primero) -->
+    <!-- JS Plugins -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#preloder').fadeOut(300); // Oculta loader
+            $('#preloder').fadeOut(300);
             $('.set-bg').each(function () {
                 const bg = $(this).attr('data-setbg');
                 $(this).css('background-image', 'url(' + bg + ')');
@@ -159,11 +169,7 @@
         <div class="container">
             <div class="footer__top">
                 <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="header__logo">
-                           
-                        </div>
-                    </div>
+                    <div class="col-lg-6 col-md-6"></div>
                     <div class="col-lg-6 col-md-6">
                         <div class="footer__top__social">
                             <a href="#"><i class="fa fa-facebook"></i></a>
